@@ -1,0 +1,5 @@
+langchain
+dotenv
+langchain_milvus
+langchain_google_genai
+langchain-ollama
