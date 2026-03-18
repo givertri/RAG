@@ -7,10 +7,10 @@ import argparse
 class RecipeConstraints(BaseModel):
     category: Optional[str]
     cuisine: Optional[str]
-    ingredients_incl: Optional[List[str]]
-    ingredients_excl: Optional[List[str]]
-    utensils_incl: Optional[List[str]]
-    utensils_excl: Optional[List[str]]
+    ingredients_incl: Optional[List[Optional[str]]]
+    ingredients_excl: Optional[List[Optional[str]]]
+    utensils_incl: Optional[List[Optional[str]]]
+    utensils_excl: Optional[List[Optional[str]]]
     time_class: Optional[str] #"Duration (very short, short, average, long, very long)")
     
     # Nutrients as [min, max]
@@ -115,17 +115,16 @@ def text_to_json(text):
     """
 
     response = llm.invoke(prompt)
+    print(response.content)
     try:
         data = json.loads(response.content)
         data = normalize_keys(data)
-        print(data)
+        #print(data)
     except json.JSONDecodeError:
         data = {} # fallback to empty constraints
 
-    data['ingredients_incl'] = sanitize_list_field(data.get('ingredients_incl'))
-    data['ingredients_excl'] = sanitize_list_field(data.get('ingredients_excl'))
-    data['utensils_incl'] = sanitize_list_field(data.get('utensils_incl'))
-    data['utensils_excl'] = sanitize_list_field(data.get('utensils_excl'))
+    for key in ["ingredients_incl", "ingredients_excl", "utensils_incl", "utensils_excl"]:
+        data[key] = sanitize_list_field(data.get(key))
 
     nutrient_keys = [
         "calories_kcal", "carbohydrates_g", "cholesterol_mg", "fiber_g",
@@ -133,6 +132,10 @@ def text_to_json(text):
     ]
     for key in nutrient_keys:
         data[key] = sanitize_nutrient_field(data.get(key))
+    
+    for key in ["category", "cuisine", "time_class"]:
+        if key not in data:
+            data[key] = None
 
     return RecipeConstraints(**data)
 

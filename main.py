@@ -1,10 +1,9 @@
-from components.loader_simple import SimpleLoader
-from components.loader_fromcsv import CsvLoader
 from components.indexer_ollama import OllamaIndexer
 from components.retriever_langchain import LangchainRetriever
 from components.retriever_langchain_hybrid import LangchainRetrieverHybrid
 from components.generator_llama import LlamaGenerator
 from core.rag_pipeline import RAGPipeline
+from preprocessing.text_to_json import text_to_json
 import argparse
 
 def main(prompt=None, use_hybrid=False):
@@ -21,7 +20,7 @@ def main(prompt=None, use_hybrid=False):
             "--retriever",
             type=str,
             choices=["regular", "hybrid"],
-            default="regular",
+            default="hybrid",
             help="Which retriever to use: 'regular' or 'hybrid'"
         )
         args = parser.parse_args()
@@ -32,18 +31,11 @@ def main(prompt=None, use_hybrid=False):
     indexer = OllamaIndexer(collection_name="recipes")
     vectorstore = indexer.get_vectorstore()
 
-    metadata_json = {
-        "category": "Appetizer",
-        "ingredients_incl": ["cheese"],
-        "time_class": "short",
-        "cuisine": "Mexican",
-        "calories_kcal": [None, None],
-        "protein_g": [None, None]
-    }
-
     # Create retriever based on CLI argument
     if use_hybrid:
-        retriever = LangchainRetrieverHybrid(vectorstore, metadata_json)
+        json_query = text_to_json(prompt)
+        print(json_query)
+        retriever = LangchainRetrieverHybrid(vectorstore, json_query=json_query)
     else:
         retriever = LangchainRetriever(vectorstore)
 

@@ -3,7 +3,7 @@ from components.indexer_ollama import OllamaIndexer
 
 def main():
     #drop()
-    print("dropped")
+    #print("dropped")
     populate()
     print("populated")
     #count()

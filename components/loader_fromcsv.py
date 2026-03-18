@@ -1,44 +1,65 @@
 import csv
+import ast # To safely handle string-represented lists
 from langchain_core.documents import Document
 from core.base_loader import BaseLoader
 
 class CsvLoader(BaseLoader):
     def __init__(self, file_path: str, max_rows: int = None):
-        """
-        Initialize the loader with the CSV file path.
-        """
         self.file_path = file_path
         self.max_rows = max_rows
 
+    def _clean_list_string(self, text):
+        """Converts "['a', 'b']" to "a, b" for better keyword indexing."""
+        try:
+            # Safely evaluate the string as a list
+            data = ast.literal_eval(text)
+            if isinstance(data, list):
+                return ", ".join(data)
+        except (ValueError, SyntaxError):
+            pass
+        return text
+
     def load(self):
-        """
-        Load CSV rows and convert them to LangChain Documents.
-        Each row should have 'name' and 'instructions' columns.
-        Metadata includes all other columns.
-        """
         documents = []
+        float_cols = {'rating', 'calories_kcal', 'protein_g', 'fat_g', 'carbohydrates_g'} # TODO add all columns
+    
         with open(self.file_path, newline='', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile)
+            # i starts at 1 for the first data row (skipping the header)
             for i, row in enumerate(reader, start=1):
-
                 if self.max_rows is not None and i > self.max_rows:
                     break
 
-                # Combine features
                 name = row.get('name', '').strip()
-                cuisine = row.get('cuisine', '').strip()
-                ingredients = row.get('ingredients', '').strip()
-                instructions = row.get('instructions', '').strip()
-                page_content = f"{name}, {cuisine}, {ingredients}, {instructions}"
+                cuisine = self._clean_list_string(row.get('cuisine', ''))
+                ingredients = self._clean_list_string(row.get('ingredients', ''))
+                instructions = self._clean_list_string(row.get('instructions', ''))
+            
+                page_content = (
+                    f"Recipe: {name}\n"
+                    f"Cuisine: {cuisine}\n"
+                    f"Ingredients: {ingredients}\n"
+                    f"Instructions: {instructions}"
+                )
 
-                # Metadata
-                metadata = {k: v for k, v in row.items()}
+                metadata = {}
+                for k, v in row.items():
+                    if not v or v.strip() == "":
+                        metadata[k] = 0.0 if k in float_cols else ""
+                        continue
+                
+                    if k in float_cols:
+                        try:
+                            metadata[k] = float(v)
+                        except ValueError:
+                            metadata[k] = 0.0
+                    else:
+                        metadata[k] = v
+            
+                metadata['row_id'] = i # store unique row number in metadata
 
-                # Create a LangChain Document
-                doc = Document(page_content=page_content, metadata=metadata)
-                documents.append(doc)
+                documents.append(Document(page_content=page_content, metadata=metadata))
 
-                # Print status every 10000 rows
                 if i % 10000 == 0:
                     print(f"Processed {i} rows...")
 
