@@ -105,7 +105,8 @@ def text_to_json(text):
     Rules:
     - Do NOT assume missing information such as ingredients.
     - If information is not present, use null.
-    - Nutritional values must be [min, max]. Min and max must be different numbers. If only a single value is given, return [value, value]. If user mentions "at least", return [value, null]. If user mentions "at most", return [0, value]. 
+    - Ingredients and utensils are lists (both incl and excl).
+    - Nutritional values must be [min, max]. Min and max must be different numbers. If only a single value is given, return [value, value]. If user mentions "at least" or "more than", return [value, null]. If user mentions "at most" or "less than", return [0, value]. 
     - Possible time_class values: very short, short, average, long, very long, null
     - Possible category values: Breakfast, Lunch, Dinner, Snack, Appetizer, Dessert, null
 

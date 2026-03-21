@@ -6,3 +6,4 @@ venv/
 env/
 volumes
 env.env
+eval_results

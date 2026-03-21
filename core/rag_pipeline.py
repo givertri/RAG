@@ -28,4 +28,4 @@ class RAGPipeline:
 
         log_rag_result(question=query, answer=response, contexts=docs, ret_time=retrieval_time, gen_time=generation_time)
 
-        return response
+        return response, docs
