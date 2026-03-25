@@ -237,7 +237,7 @@ if __name__ == "__main__":
         {"question": "A dish with rice and seafood. I do not like shrimp. It should have at least 250 calories."},
     ]
 
-    indexer     = OllamaIndexer(collection_name="recipes")
+    indexer = OllamaIndexer(collection_name="recipes")
     vectorstore = indexer.get_vectorstore()
 
     results = run_evaluation(vectorstore, test_set, output_dir="eval_results")
@@ -248,4 +248,4 @@ if __name__ == "__main__":
     print(results.to_string(index=False))
 
     print("\nMean scores:")
-    print(results[["faithfulness", "context_precision", "constraint_satisfaction"]].mean())
+    print(results[["faithfulness", "context_precision", "constraint_satisfaction", "rag_response_time"]].mean())

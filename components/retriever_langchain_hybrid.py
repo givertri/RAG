@@ -1,32 +1,44 @@
 from core.base_retriever import BaseRetriever
 
 def build_milvus_filter(metadata_json):
-    metadata_json = metadata_json.dict()
+    if hasattr(metadata_json, "dict"):
+        metadata_json = metadata_json.dict()
+
     conditions = []
 
-    # categorical equality
-    for key in ["category", "cuisine", "time_class"]:
-        value = metadata_json.get(key)
-        if value:
-            conditions.append(f'{key} == "{value}"')
+    def is_valid(val):
+        """Checks if a value is actually usable and not a 'null' string."""
+        if val is None:
+            return False
+        if isinstance(val, str) and val.lower() == "null":
+            return False
+        return True
 
-    # include ingredients (handled by semantic search)
-    #for ingredient in metadata_json.get("ingredients_incl", []):
-        #conditions.append(f'ARRAY_CONTAINS(ingredients, "{ingredient}")')
+    # 1. Array inclusion fields (cuisine, category)
+    for key in ["cuisine", "category"]:
+        values = metadata_json.get(key)
+        if values:
+            if isinstance(values, str):
+                values = [values]
+            # Filter out "null" strings from the list
+            valid_values = [v for v in values if is_valid(v)]
+            for v in valid_values:
+                conditions.append(f'ARRAY_CONTAINS({key}, "{v.lower()}")')
 
-    # exclude ingredients
-    for ingredient in metadata_json.get("ingredients_excl", []):
-        conditions.append(f'not ARRAY_CONTAINS(ingredients, "{ingredient}")')
+    # 2. Plain scalar field (time_class)
+    time_class = metadata_json.get("time_class")
+    if is_valid(time_class):
+        conditions.append(f'time_class == "{time_class}"')
 
-    # include utensils (handled by semantic search)
-    #for utensil in metadata_json.get("utensils_incl", []):
-        #conditions.append(f'ARRAY_CONTAINS(utensils, "{utensil}")')
+    # 3. Exclusion array fields
+    for key, field_name in [("ingredients_excl", "ingredients"), ("utensils_excl", "utensils")]:
+        items = metadata_json.get(key, [])
+        if isinstance(items, list):
+            for item in items:
+                if is_valid(item):
+                    conditions.append(f'not ARRAY_CONTAINS({field_name}, "{item}")')
 
-    # exclude utensils
-    for utensil in metadata_json.get("utensils_excl", []):
-        conditions.append(f'not ARRAY_CONTAINS(utensils, "{utensil}")')
-
-    # numeric ranges
+    # 4. Numeric range fields
     numeric_fields = [
         "calories_kcal", "carbohydrates_g", "cholesterol_mg", "fiber_g",
         "protein_g", "saturated_fat_g", "sodium_mg", "sugar_g",
@@ -35,20 +47,15 @@ def build_milvus_filter(metadata_json):
 
     for field in numeric_fields:
         value_range = metadata_json.get(field)
-
-        if value_range:
+        # Ensure it's a list/tuple of length 2 and not a "null" string
+        if isinstance(value_range, (list, tuple)) and len(value_range) == 2:
             start, end = value_range
-
-            if start is not None:
+            if is_valid(start):
                 conditions.append(f"{field} >= {start}")
-
-            if end is not None:
+            if is_valid(end):
                 conditions.append(f"{field} <= {end}")
 
-    if conditions:
-        return " and ".join(conditions)
-
-    return None
+    return " and ".join(conditions) if conditions else None
 
 class LangchainRetrieverHybrid(BaseRetriever):
     def __init__(self, vectorstore, k=5, json_query={}):
@@ -69,13 +76,27 @@ class LangchainRetrieverHybrid(BaseRetriever):
                 "ranker_params": {"k": 60}  # Hybrid search
             }
         )
-        return retriever.invoke(query)
+        results = retriever.invoke(query)
+        
+        if not results:
+            print("No documents found with filter. Retrying without filter...")
+            retriever_no_filter = self.vectorstore.as_retriever(
+                search_type="similarity",
+                search_kwargs={
+                    "k": self.k,
+                    "ranker_type": "rrf",
+                    "ranker_params": {"k": 60}
+                }
+            )
+            results = retriever_no_filter.invoke(query)
+
+        return results
 
 if __name__ == "__main__":
     example_json = {
         "category": "Dinner",
         "cuisine": "Italian",
-        "time_class": "medium",
+        "time_class": "average",
 
         "ingredients_incl": ["tomato", "basil", "garlic"],
         "ingredients_excl": ["nuts", "anchovy"],

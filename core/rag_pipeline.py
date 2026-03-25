@@ -13,6 +13,8 @@ class RAGPipeline:
         # Measure retrieval time
         retrieval_start = time.perf_counter()
         docs = self.retriever.retrieve(query)
+        for doc in docs:
+            print(doc.metadata.get("name"), doc.metadata.get("ingredients"))
         retrieval_end = time.perf_counter()
         retrieval_time = retrieval_end - retrieval_start
 

@@ -6,7 +6,7 @@ from core.rag_pipeline import RAGPipeline
 from preprocessing.text_to_json import text_to_json
 import argparse
 
-def main(prompt=None, use_hybrid=False):
+def main(prompt=None, use_hybrid=True):
     if prompt is None:
         parser = argparse.ArgumentParser(description="Run RAG pipeline with a custom prompt.")
         parser.add_argument(

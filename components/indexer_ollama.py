@@ -1,7 +1,6 @@
 from core.base_indexer import BaseIndexer
 from langchain_milvus import Milvus, BM25BuiltInFunction
 from langchain_ollama import OllamaEmbeddings
-from uuid import uuid4
 
 
 class OllamaIndexer(BaseIndexer):
@@ -17,25 +16,27 @@ class OllamaIndexer(BaseIndexer):
 
         self.URI = "http://localhost:19530" # Milvus
 
-        bm25_func = BM25BuiltInFunction(output_field_names="sparse")
+        bm25_func = BM25BuiltInFunction(input_field_names='text', output_field_names="sparse")
 
         self.vector_store = Milvus(
             embedding_function=self.embeddings,
             builtin_function=bm25_func,
-            vector_field=["dense", "sparse"],    # Hybrid search
+            vector_field=["dense", "sparse"], # hybrid
             connection_args={"uri": self.URI},
             collection_name=self.collection_name,
             drop_old=False,
             index_params=[
                 {
-                    #"field_name": "dense",
-                    "index_type": "AUTOINDEX",
+                    # dense
+                    "index_type": "IVF_FLAT",
                     "metric_type": "COSINE",
+                    "params": {"nlist": 128}
                 },
                 {
-                    #"field_name": "sparse",
+                    # sparse
                     "index_type": "SPARSE_INVERTED_INDEX",
                     "metric_type": "BM25",
+                    "params": {"drop_ratio_build": 0.2}
                 }
             ]
         )
@@ -47,16 +48,13 @@ class OllamaIndexer(BaseIndexer):
         # Get current number of rows in the collection
         total_docs = len(documents)
         print(f"Starting indexing {total_docs} documents.")
-    
-        all_ids = [str(doc.metadata['row_id']) for doc in documents]
 
         batch_size = 100
         for i in range(0, total_docs, batch_size):
             batch_docs = documents[i : i + batch_size]
-            batch_ids = all_ids[i : i + batch_size]
 
             # Pass the batch_ids to add_documents
-            self.vector_store.add_documents(documents=batch_docs, ids=batch_ids)
+            self.vector_store.add_documents(documents=batch_docs)
 
             print(f"Indexed {i + len(batch_docs)}/{total_docs} documents...")
 
