@@ -8,3 +8,102 @@ I am vegetarian. Give me a tasty meal with lots of protein.
 I do not have an oven. What is a good recipe with lots of meat.
 Give me a recipe without vegetables and a minimum of 500 calories.
 I want a healthy recipe for breakfast and lots of fiber.
+Give me a vegan dinner with at least 20g protein and under 600 calories.
+Quick breakfast recipe under 10 minutes with high protein.
+Low-carb dinner with less than 15g carbs and high fat.
+Gluten-free dessert with less than 200 calories.
+High-calorie bulking meal with at least 800 calories.
+Spicy Mexican recipe without dairy.
+Asian noodle dish with less than 400 calories.
+High-fiber vegan lunch with beans and no oil.
+Recipe with chicken and at least 50g protein.
+Low-sodium dinner with less than 500mg sodium.
+No-cook recipe with high protein.
+Meal prep recipe for the week with balanced macros.
+Keto breakfast with less than 10g carbs.
+Vegetarian recipe with mushrooms and at least 25g protein.
+Dessert without sugar and less than 150 calories.
+High-protein snack with no dairy.
+Dinner recipe under 30 minutes and under 500 calories.
+Recipe with fish and high omega-3 content.
+Low-fat recipe with less than 10g fat.
+Comfort food with at least 700 calories.
+Vegan recipe with quinoa and high protein.
+Recipe without gluten and without nuts.
+Breakfast with eggs and less than 300 calories.
+High-carb meal for athletes with at least 100g carbs.
+Quick snack under 200 calories.
+Recipe with beef and no garlic.
+Low-calorie soup under 250 calories.
+Vegetarian dinner without soy.
+Recipe with rice and under 400 calories.
+High-protein vegan meal with lentils.
+Recipe with potatoes and less than 500 calories.
+Low-sugar dessert with less than 5g sugar.
+Recipe without onions and garlic.
+High-fat keto dinner with at least 60g fat.
+Vegetarian pasta with high protein.
+Recipe with tofu and less than 400 calories.
+Breakfast smoothie with high fiber.
+Meal with at least 30g protein and under 600 calories.
+Recipe with shrimp and no dairy.
+Low-calorie vegan dinner under 350 calories.
+High-protein breakfast with no eggs.
+Recipe with chickpeas and high fiber.
+Gluten-free breakfast with oats.
+Recipe with turkey and less than 500 calories.
+Vegan dessert with chocolate and low sugar.
+High-protein lunch with chicken.
+Recipe with avocado and high fat.
+Low-carb snack under 100 calories.
+Recipe with salmon and high protein.
+Vegetarian recipe with eggs and cheese.
+High-calorie vegan meal with nuts.
+Recipe without sugar and without flour.
+Dinner with less than 400 calories and high protein.
+Recipe with spinach and high iron.
+Breakfast with less than 250 calories.
+Quick vegan lunch under 15 minutes.
+Recipe with beans and under 500 calories.
+Low-fat vegetarian dinner.
+Recipe with pork and high protein.
+Healthy snack with high fiber.
+Recipe with lentils and less than 400 calories.
+Vegetarian recipe without dairy and eggs.
+Recipe with quinoa and vegetables.
+High-protein dessert with low sugar.
+Recipe with chicken and under 300 calories.
+Low-carb vegan meal.
+Recipe with eggs and avocado.
+High-calorie breakfast over 700 calories.
+Quick dinner under 20 minutes.
+Recipe with beef and high protein.
+Vegetarian recipe with high fiber.
+Recipe with pasta and less than 500 calories.
+Low-sodium vegan recipe.
+Recipe with fish and under 400 calories.
+High-protein vegetarian snack.
+Recipe without oil and low fat.
+Breakfast with high protein and low carbs.
+Recipe with tofu and high protein.
+Healthy dinner under 600 calories.
+Recipe with sweet potatoes and high fiber.
+Low-calorie vegan snack.
+Recipe with chicken and low fat.
+Vegetarian recipe with beans and rice.
+High-protein meal with less than 500 calories.
+Recipe with mushrooms and no dairy.
+Low-carb breakfast under 300 calories.
+Recipe with lentils and high protein.
+Quick snack with high protein.
+Recipe with beef and low carbs.
+Vegetarian recipe with high protein and low fat.
+Recipe with fish and high protein.
+Low-calorie dessert under 200 calories.
+Recipe with chicken and high protein.
+Vegan recipe with high fiber.
+Recipe with eggs and high protein.
+Low-fat breakfast under 300 calories.
+Recipe with quinoa and high protein.
+Vegetarian recipe with tofu and vegetables.
+Recipe with beans and high protein.

@@ -100,15 +100,23 @@ def text_to_json(text):
     utensils_incl, utensils_excl, time_class,
     calories_kcal, carbohydrates_g, cholesterol_mg,
     fiber_g, protein_g, saturated_fat_g, sodium_mg,
-    sugar_g, fat_g, unsaturated_fat_g.
+    sugar_g, fat_g, unsaturated_fat_g, extra.
 
     Rules:
     - Do NOT assume missing information such as ingredients.
     - If information is not present, use null.
-    - Ingredients and utensils are lists (both incl and excl).
+    - Ingredients and kitchen utensils are lists (both incl and excl).
     - Nutritional values must be [min, max]. Min and max must be different numbers. If only a single value is given, return [value, value]. If user mentions "at least" or "more than", return [value, null]. If user mentions "at most" or "less than", return [0, value]. 
-    - Possible time_class values: very short, short, average, long, very long, null
+    - Possible time_class values: very short, short, average, long, very long, null.
+    - time_class mapping:
+        <= 10 minutes → very short
+        11-25 minutes → short
+        26-45 minutes → average
+        46-90 minutes → long
+        > 90 minutes → very long
     - Possible category values: Breakfast, Lunch, Dinner, Snack, Appetizer, Dessert, null
+    - Do not add any comments with # or //
+    - Use the extra key for any constraints that can't be filled in elsewhere in the JSON.
 
     Question: {text}
 

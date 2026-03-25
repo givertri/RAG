@@ -86,7 +86,7 @@ Perform these three evaluations:
    supported by the retrieved contexts (true) or not (false).
 
 2. CONTEXT_PRECISION: For each context, state whether it is relevant to answering the
-   question (true/false) and give a one-sentence reason.
+   question (true/false).
 
 3. CONSTRAINT_SATISFACTION: Using the extracted constraints, state whether the answer
    respects each constraint (true/false). Null values mean no constraint.
@@ -97,10 +97,10 @@ Respond ONLY with this JSON and nothing else:
     "claims": [{{"claim": "<text>", "supported": <true|false>}}]
   }},
   "context_precision": {{
-    "contexts": [{{"context_index": <int>, "relevant": <true|false>, "reason": "<one sentence>"}}]
+    "contexts": [{{"relevant": <true|false>}}]
   }},
   "constraint_satisfaction": {{
-    "constraints": [{{"constraint": "<text>", "satisfied": <true|false>}}]
+    "constraints": [{{"satisfied": <true|false>}}]
   }}
 }}"""
 

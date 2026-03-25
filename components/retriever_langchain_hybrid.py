@@ -71,9 +71,10 @@ class LangchainRetrieverHybrid(BaseRetriever):
             search_type="similarity",
             search_kwargs={
                 "k": self.k,
+                "fetch_k": 50,
                 "filter": filter_expr,
                 "ranker_type": "rrf",       # Hybrid search
-                "ranker_params": {"k": 60}  # Hybrid search
+                "ranker_params": {"k": 20}  # Hybrid search
             }
         )
         results = retriever.invoke(query)
@@ -84,8 +85,9 @@ class LangchainRetrieverHybrid(BaseRetriever):
                 search_type="similarity",
                 search_kwargs={
                     "k": self.k,
+                    "fetch_k": 50,
                     "ranker_type": "rrf",
-                    "ranker_params": {"k": 60}
+                    "ranker_params": {"k": 20}
                 }
             )
             results = retriever_no_filter.invoke(query)
