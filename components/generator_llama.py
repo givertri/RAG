@@ -25,7 +25,7 @@ class LlamaGenerator(BaseGenerator):
 
         syspromptRAG = (
             f"You are a meal-suggesting RAG. Use the retrieved information (which is correct) in your answer.\n\n"
-            f"Give the recipe instructions in European metrics.\n\n"
+            f"Always give the recipe instructions in European metrics.\n\n"
             f"Retrieved information:\n{context}\n\n"
             f"Question: {query}\n"
             f"Answer:"

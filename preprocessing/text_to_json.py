@@ -105,7 +105,7 @@ def text_to_json(text):
     Rules:
     - Do NOT assume missing information such as ingredients.
     - If information is not present, use null.
-    - Ingredients and kitchen utensils are lists (both incl and excl).
+    - Ingredients and kitchen utensils are lists (both incl and excl). Ingredients should be lemmatized/normalized.
     - Nutritional values must be [min, max]. Min and max must be different numbers. If only a single value is given, return [value, value]. If user mentions "at least" or "more than", return [value, null]. If user mentions "at most" or "less than", return [0, value]. 
     - Possible time_class values: very short, short, average, long, very long, null.
     - time_class mapping:
@@ -116,7 +116,7 @@ def text_to_json(text):
         > 90 minutes → very long
     - Possible category values: Breakfast, Lunch, Dinner, Snack, Appetizer, Dessert, null
     - Do not add any comments with # or //
-    - Use the extra key for any constraints that can't be filled in elsewhere in the JSON.
+    - The extra field can ONLY contain short, structured constraints that do not fit any other key or null.
 
     Question: {text}
 

@@ -9,12 +9,34 @@ class RAGPipeline:
         self.retriever = retriever
         self.generator = generator
 
+    def filter_doc_metadata(self, doc):
+        excluded_fields = {
+            "pk",
+            "name",
+            "cuisine",
+            "ingredients",
+            "instructions",
+            "dense",
+            "sparse"
+        }
+
+        filtered_metadata = {
+            k: v for k, v in doc.metadata.items()
+            if k not in excluded_fields
+        }
+
+        doc.metadata = filtered_metadata
+        return doc
+
     def run(self, query: str) -> str:
         # Measure retrieval time
         retrieval_start = time.perf_counter()
         docs = self.retriever.retrieve(query)
         for doc in docs:
             print(doc.metadata.get("name"), doc.metadata.get("ingredients"))
+
+        filtered_docs = [self.filter_doc_metadata(doc) for doc in docs]
+
         retrieval_end = time.perf_counter()
         retrieval_time = retrieval_end - retrieval_start
 
@@ -22,12 +44,12 @@ class RAGPipeline:
 
         # Measure generation time
         generation_start = time.perf_counter()
-        response = self.generator.generate(query, docs, with_retrieval=True)
+        response = self.generator.generate(query, filtered_docs, with_retrieval=True)
         generation_end = time.perf_counter()
         generation_time = generation_end - generation_start
 
         #print(f"Generation time: {generation_time:.4f} seconds")
 
-        log_rag_result(question=query, answer=response, contexts=docs, ret_time=retrieval_time, gen_time=generation_time)
+        log_rag_result(question=query, answer=response, contexts=filtered_docs, ret_time=retrieval_time, gen_time=generation_time)
 
-        return response, docs
+        return response, filtered_docs
