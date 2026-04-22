@@ -35,6 +35,7 @@ docker compose up -d
 OR
 ```bash
 bash install_milvus.sh
+./start_milvus.sh
 ```
 
 #### Populate the Database
