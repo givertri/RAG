@@ -174,7 +174,7 @@ def run_evaluation(vectorstore, test_questions: list[dict], output_dir: str = "e
         retriever = LangchainRetrieverHybrid(vectorstore, json_query=json_query)
 
         start_time = time.time()
-        answer, retrieved_docs = RAGPipeline(retriever, LlamaGenerator()).run(prompt)
+        answer, retrieved_docs = RAGPipeline(retriever, LlamaGenerator(stream = False)).run(prompt)
         rag_time = time.time() - start_time
 
         contexts = [doc.page_content for doc in retrieved_docs]

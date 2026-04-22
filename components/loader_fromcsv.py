@@ -153,7 +153,7 @@ class CsvLoader(BaseLoader):
                     else:
                         metadata[k] = v
 
-                metadata['row_id'] = i
+                metadata['pk'] = i
 
                 documents.append(
                     Document(page_content=page_content, metadata=metadata)

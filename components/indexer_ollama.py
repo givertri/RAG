@@ -54,7 +54,7 @@ class OllamaIndexer(BaseIndexer):
             batch_docs = documents[i : i + batch_size]
 
             # Pass the batch_ids to add_documents
-            self.vector_store.add_documents(documents=batch_docs)
+            self.vector_store.add_documents(documents=batch_docs, ids=[doc.metadata["pk"] for doc in batch_docs])
 
             print(f"Indexed {i + len(batch_docs)}/{total_docs} documents...")
 
