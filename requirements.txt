@@ -5,3 +5,6 @@ langchain_google_genai
 langchain-ollama
 nltk
 pymilvus
+regex
+ollama
+pydantic
