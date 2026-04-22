@@ -15,16 +15,26 @@ git clone https://github.com/givertri/RAG
 cd RAG
 ```
 
+#### Install dependencies
+
+```bash
+pip install requirements.txt
+```
+
 ---
 
 ### 2. Start and Populate Milvus
 
 This project uses **Milvus** as the vector database.
 
-#### Start Milvus with Docker Compose
+#### Start Milvus
 
 ```bash
 docker compose up -d
+```
+OR
+```bash
+bash install_milvus.sh
 ```
 
 #### Populate the Database
@@ -41,6 +51,12 @@ Follow the official installation:
 
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
+```
+
+#### Set Model Location & Serve
+```bash
+export OLLAMA_MODELS=/workspace/ollama_models
+ollama serve &
 ```
 
 #### Download Required Models
