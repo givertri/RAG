@@ -9,7 +9,7 @@ cd $MILVUS_DIR
 
 # 2. Download Milvus Standalone Binary (v2.5.x for stability)
 echo "--- Downloading Milvus Binary ---"
-wget https://github.com/milvus-io/milvus/releases/download/v2.5.0/milvus-standalone-linux-amd64.tar.gz
+wget https://github.com/milvus-io/milvus/archive/refs/tags/v2.6.15.tar.gz
 tar -zxvf milvus-standalone-linux-amd64.tar.gz -C bin/
 rm milvus-standalone-linux-amd64.tar.gz
 
