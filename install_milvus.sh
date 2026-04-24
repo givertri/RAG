@@ -8,10 +8,20 @@ mkdir -p $MILVUS_DIR/configs
 cd $MILVUS_DIR
 
 # 2. Download Milvus Standalone Binary (v2.5.x for stability)
+# 2. Download Milvus Binary
 echo "--- Downloading Milvus Binary ---"
-wget https://github.com/milvus-io/milvus/archive/refs/tags/v2.6.15.tar.gz
-tar -zxvf milvus-standalone-linux-amd64.tar.gz -C bin/
-rm milvus-standalone-linux-amd64.tar.gz
+# Note: Ensure the version and filename match an actual release asset on GitHub
+# As of v2.5.x, the naming usually follows this pattern:
+export MILVUS_VERSION="v2.5.0"
+wget https://github.com/milvus-io/milvus/releases/download/${MILVUS_VERSION}/milvus-linux-amd64.tar.gz
+
+if [ $? -ne 0 ]; then
+    echo "Error: Download failed. Please check if version $MILVUS_VERSION exists at the URL."
+    exit 1
+fi
+
+tar -zxvf milvus-linux-amd64.tar.gz -C bin/
+rm milvus-linux-amd64.tar.gz
 
 # 3. Download Default Config
 echo "--- Configuring Milvus ---"
