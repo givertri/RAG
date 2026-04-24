@@ -12,8 +12,9 @@ cd $MILVUS_DIR
 echo "--- Downloading Milvus Binary ---"
 # Note: Ensure the version and filename match an actual release asset on GitHub
 # As of v2.5.x, the naming usually follows this pattern:
-export MILVUS_VERSION="v2.5.0"
-wget https://github.com/milvus-io/milvus/releases/download/${MILVUS_VERSION}/milvus-linux-amd64.tar.gz
+VERSION="v2.4.4"
+FILE="milvus-standalone-linux-amd64.tar.gz"
+wget https://github.com/milvus-io/milvus/releases/download/${VERSION}/${FILE}
 
 if [ $? -ne 0 ]; then
     echo "Error: Download failed. Please check if version $MILVUS_VERSION exists at the URL."
