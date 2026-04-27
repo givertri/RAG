@@ -41,7 +41,7 @@ bash install_milvus.sh
 #### Populate the Database
 
 ```bash
-python populate_db.py
+python -m populate_db
 ```
 
 ---
