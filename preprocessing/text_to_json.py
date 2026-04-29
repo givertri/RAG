@@ -89,7 +89,8 @@ def text_to_json(text):
         model="qwen3:4b",
         temperature=0,
         format='json',
-        reasoning=False
+        reasoning=False,
+        base_url="http://203.57.40.79:10203"
     )
 
     prompt = f"""

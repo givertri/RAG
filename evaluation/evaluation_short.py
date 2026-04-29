@@ -22,6 +22,7 @@ eval_llm = ChatOllama(
     temperature=0,
     format="json",
     reasoning=False,
+    base_url="http://203.57.40.79:10203"
 )
 
 

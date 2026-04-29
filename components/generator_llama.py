@@ -14,6 +14,7 @@ class LlamaGenerator(BaseGenerator):
         self.llm = ChatOllama(
             model="llama3.2:latest",
             temperature=0.2,
+            base_url="http://203.57.40.79:10203"
         )
 
     def generate(self, query, docs, with_retrieval, stream: bool = None):

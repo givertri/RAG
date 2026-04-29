@@ -14,8 +14,8 @@ COLLECTION_NAME = "recipes"
 MILVUS_URI = "http://localhost:19530"
 
 def main():
-    drop()
-    create_collection_if_not_exists()
+    #drop()
+    #create_collection_if_not_exists()
     populate()
     count()
     print("Populated collection successfully.")

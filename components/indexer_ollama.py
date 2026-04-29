@@ -11,7 +11,8 @@ class OllamaIndexer(BaseIndexer):
         # Use Ollama local embedding model
         self.embeddings = OllamaEmbeddings(
             model="nomic-embed-text:latest",
-            base_url="http://localhost:11434"  # Ollama URL
+            base_url="http://203.57.40.79:10203"  # Ollama URL server
+            #base_url="http://localhost:11434"  # Ollama URL local
         )
 
         self.URI = "http://localhost:19530" # Milvus
@@ -49,12 +50,12 @@ class OllamaIndexer(BaseIndexer):
         total_docs = len(documents)
         print(f"Starting indexing {total_docs} documents.")
 
-        batch_size = 100
+        batch_size = 1000
         for i in range(0, total_docs, batch_size):
             batch_docs = documents[i : i + batch_size]
 
             # Pass the batch_ids to add_documents
-            self.vector_store.add_documents(documents=batch_docs, ids=[doc.metadata["pk"] for doc in batch_docs])
+            self.vector_store.add_documents(documents=batch_docs, ids=[str(doc.metadata["pk"]) for doc in batch_docs])
 
             print(f"Indexed {i + len(batch_docs)}/{total_docs} documents...")
 
