@@ -1,46 +1,26 @@
 #!/bin/bash
+set -e
 
-# 1. Setup Directories in /workspace for persistence
-export MILVUS_DIR="/workspace/milvus"
-mkdir -p $MILVUS_DIR/bin
-mkdir -p $MILVUS_DIR/data
-mkdir -p $MILVUS_DIR/configs
-cd $MILVUS_DIR
+MILVUS_VERSION="2.6.9"
 
-# 2. Download Milvus Standalone Binary (v2.5.x for stability)
-echo "--- Downloading Milvus Binary ---"
-wget https://github.com/milvus-io/milvus/releases/download/v2.5.0/milvus-standalone-linux-amd64.tar.gz
-tar -zxvf milvus-standalone-linux-amd64.tar.gz -C bin/
-rm milvus-standalone-linux-amd64.tar.gz
+echo "--- Downloading Milvus ${MILVUS_VERSION} .deb ---"
+wget "https://github.com/milvus-io/milvus/releases/download/v${MILVUS_VERSION}/milvus_${MILVUS_VERSION}-1_amd64.deb"
 
-# 3. Download Default Config
-echo "--- Configuring Milvus ---"
-wget https://raw.githubusercontent.com/milvus-io/milvus/master/configs/milvus.yaml -O configs/milvus.yaml
+echo "--- Installing ---"
+apt-get update
+dpkg -i "milvus_${MILVUS_VERSION}-1_amd64.deb" || apt-get -f install -y
 
-# 4. Modify config for local persistence and embedded ETCD
-# We point everything to /workspace so data isn't lost on restart
-sed -i "s|rootPath:.*|rootPath: /workspace/milvus/data/milvus|g" configs/milvus.yaml
-sed -i "s|path:.*etcd|path: /workspace/milvus/data/etcd|g" configs/milvus.yaml
-
-# 5. Create Start and Stop helpers
-cat <<EOF > start_milvus.sh
-#!/bin/bash
-export LD_LIBRARY_PATH=$MILVUS_DIR/bin/lib:\$LD_LIBRARY_PATH
-nohup $MILVUS_DIR/bin/milvus run standalone --config $MILVUS_DIR/configs/milvus.yaml > $MILVUS_DIR/milvus.log 2>&1 &
-echo "Milvus starting in background... check milvus.log for status."
-EOF
-
-cat <<EOF > stop_milvus.sh
-#!/bin/bash
-pkill -f milvus
-echo "Milvus stopped."
-EOF
-
-chmod +x start_milvus.sh stop_milvus.sh
-
-echo "------------------------------------------------"
-echo "Installation complete!"
-echo "To start Milvus: ./start_milvus.sh"
-echo "To stop Milvus:  ./stop_milvus.sh"
-echo "Logs are located at: $MILVUS_DIR/milvus.log"
-echo "------------------------------------------------"
+echo "--- Starting Milvus ---"
+# Try systemd first, fall back to direct binary
+if systemctl is-system-running 2>/dev/null; then
+    systemctl enable milvus
+    systemctl start milvus
+    systemctl status milvus
+else
+    # RunPod containers often don't have systemd
+    export LD_LIBRARY_PATH=/usr/lib/milvus:$LD_LIBRARY_PATH
+    nohup /usr/bin/milvus run standalone > /var/log/milvus.log 2>&1 &
+    echo "Milvus starting (PID $!), check /var/log/milvus.log"
+    sleep 8
+    curl -sf http://localhost:9091/healthz && echo "Milvus is healthy!" || echo "Still starting, check logs"
+fi

@@ -4,7 +4,7 @@ A Retrieval-Augmented Generation (RAG) pipeline for generating recipe suggestion
 
 ---
 
-## 📦 Installation & Setup
+## Installation & Setup
 
 ### 1. Clone the Repository
 
@@ -18,7 +18,7 @@ cd RAG
 #### Install dependencies
 
 ```bash
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 ---
@@ -41,7 +41,7 @@ bash install_milvus.sh
 #### Populate the Database
 
 ```bash
-python populate_db.py
+python -m populate_db
 ```
 
 ---
@@ -70,7 +70,7 @@ ollama pull nomic-embed-text
 
 ---
 
-## 🚀 Running the RAG Pipeline
+## Running the RAG Pipeline
 
 Run the main script with a custom prompt:
 
@@ -89,7 +89,7 @@ python main.py "Give me a quick pasta recipe" --retriever regular
 
 ---
 
-## 🧠 How It Works
+## How It Works
 
 ### Pipeline Components
 
@@ -124,7 +124,7 @@ It will run with:
 
 ---
 
-## ⚙️ Arguments
+## Arguments
 
 | Argument      | Description                    | Default  |
 | ------------- | ------------------------------ | -------- |
@@ -133,9 +133,8 @@ It will run with:
 
 ---
 
-## 🔄 Example Output Flow
+## Batch Evaluation
+```bash
+python -m evaluation.evaluation_short
+```
 
-1. Prompt is parsed
-2. (Hybrid only) Prompt is converted to structured JSON constraints
-3. Relevant documents retrieved from Milvus
-4. Generator produces final answer
