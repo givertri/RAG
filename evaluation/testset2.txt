@@ -1,0 +1,100 @@
+Give me an Italian dinner recipe including tomato and basil, excluding dairy, that can be made with only a stovetop and takes a short time.
+Provide a vegan breakfast recipe with oats and banana, at least 8g fiber and under 400 kcal.
+Suggest a dessert recipe including dark chocolate and berries, excluding nuts, with sugar below 15g.
+I need a Mexican lunch recipe including avocado and beans, excluding cheese, using no oven.
+Give me a very short snack recipe including eggs, excluding gluten, with protein above 15g.
+Provide a French dinner recipe including chicken and butter, requiring an oven, with calories under 700 kcal.
+Suggest an Asian recipe including rice and soy sauce, excluding peanuts, with sodium below 800 mg.
+Give me a vegetarian dinner including spinach and feta, with fat under 20g and baked in the oven.
+Provide a high-protein breakfast (min 25g) including eggs and yogurt, excluding sugar.
+Suggest a low-sugar dessert (max 10g) including strawberries and cream, no blender required.
+Give me a quick lunch recipe including tuna, excluding mayonnaise, under 30 minutes and under 500 kcal.
+Provide an Indian dinner including lentils and spices, no dairy, with fiber above 10g.
+Suggest a snack including almonds, excluding chocolate, with fat below 15g and very short time.
+Give me a vegetarian pasta recipe including garlic and tomato, excluding cheese, cooked on stovetop.
+Provide a keto dinner including chicken and avocado, with carbs below 10g and high fat.
+Suggest a recipe including potatoes and cheese, baked in the oven, with sodium below 600 mg.
+Give me a vegan dessert including coconut milk and mango, under 300 kcal and no baking required.
+Provide a Mediterranean recipe including olive oil and fish, excluding dairy, with protein above 20g.
+Suggest a breakfast smoothie including banana and protein powder, using a blender, under 350 kcal.
+Give me a gluten-free lunch including quinoa and vegetables, excluding soy, with fiber above 8g.
+Provide a dessert including apple and cinnamon, under 250 kcal and low fat (max 10g).
+Suggest a dinner including beef and mushrooms, cooked on stovetop, with protein above 30g.
+Give me a breakfast recipe including oats and chia seeds, with fiber above 10g and no added sugar.
+Provide a vegan recipe including tofu and soy sauce, excluding nuts, using a pan only.
+Suggest a snack with yogurt and berries, low fat (max 5g), under 200 kcal.
+Give me a dinner including shrimp and garlic, under 20 minutes and high protein (min 25g).
+Provide a vegan lunch including chickpeas and spinach, with fiber above 12g and no blender.
+Suggest a dessert including peanut butter, excluding dairy, with calories under 350 kcal.
+Give me a breakfast including eggs and bacon, with protein above 25g and carbs below 10g.
+Provide a gluten-free dinner including rice and vegetables, excluding dairy, under 600 kcal.
+Suggest a recipe including pumpkin and spices, baked in oven, with sugar below 12g.
+Give me a low-sodium lunch (max 500 mg) including chicken and vegetables, no frying.
+Provide a vegetarian dinner including mushrooms and cream, cooked in oven, under 700 kcal.
+Suggest a snack including avocado and toast, very short time, with fiber above 6g.
+Give me a dessert including chocolate and orange, under 300 kcal and low saturated fat.
+Provide a keto snack including cheese and nuts, with carbs below 5g.
+Suggest a recipe including salmon and lemon, baked in oven, with protein above 25g.
+Give me a breakfast including yogurt and berries, under 250 kcal and high protein.
+Provide a lunch including pasta and tomato sauce, excluding meat, with sodium under 700 mg.
+Suggest a vegan dinner including lentils and carrots, with fiber above 12g and no oven.
+Give me a recipe including eggs and spinach, cooked in pan, with protein above 20g.
+Provide a dessert including vanilla and strawberries, under 200 kcal and low sugar.
+Suggest a high-protein dinner including beef and eggs, with protein above 35g.
+Give me a recipe including rice and chicken, excluding soy, under 600 kcal.
+Provide a snack including nuts and dried fruit, with fat under 20g.
+Suggest a low-carb breakfast including eggs and cheese, with carbs below 8g.
+Give me a vegetarian recipe including zucchini and garlic, cooked on stovetop, under 400 kcal.
+Provide a dinner including pork and apples, baked in oven, under 700 kcal.
+Suggest a dessert including caramel and chocolate, excluding nuts, under 350 kcal.
+Give me a quick lunch including chicken and salad greens, under 25 minutes and low fat.
+Provide a vegan recipe including beans and rice, with protein above 15g.
+Suggest a breakfast including pancakes and syrup, under 400 kcal and low fat.
+Give me a dinner including lamb and herbs, cooked in oven, with protein above 30g.
+Provide a snack including yogurt and honey, under 200 kcal and low fat.
+Suggest a recipe including broccoli and cheese, baked, with fiber above 6g.
+Give me a dessert including mango and coconut, under 250 kcal and no baking.
+Provide a dinner including turkey and vegetables, with protein above 30g and low fat.
+Suggest a vegan snack including hummus and carrots, with fiber above 5g.
+Give me a breakfast including toast and avocado, with fat under 15g.
+Provide a recipe including fish and potatoes, baked in oven, under 600 kcal.
+Suggest a dessert including nuts and chocolate, with sugar below 15g.
+Give me a lunch including quinoa and chicken, with protein above 25g.
+Provide a recipe including tofu and vegetables, excluding soy sauce, cooked in pan.
+Suggest a breakfast including eggs and toast, under 300 kcal.
+Give me a dinner including steak and potatoes, with protein above 35g.
+Provide a snack including fruit and yogurt, under 200 kcal.
+Suggest a dessert including ice cream and berries, under 300 kcal.
+Give me a vegan dinner including beans and rice, with fiber above 10g.
+Provide a breakfast including smoothie and banana, using blender, under 250 kcal.
+Suggest a lunch including pasta and vegetables, excluding cheese.
+Give me a recipe including shrimp and pasta, under 500 kcal.
+Provide a dessert including cheesecake and berries, under 400 kcal.
+Suggest a snack including crackers and cheese, under 250 kcal.
+Give me a dinner including chicken and rice, under 600 kcal.
+Provide a breakfast including cereal and milk, under 300 kcal.
+Suggest a vegan recipe including lentils and rice, with protein above 20g.
+Give me a dessert including brownies and chocolate, under 350 kcal.
+Provide a lunch including sandwich and vegetables, under 500 kcal.
+Suggest a snack including nuts and chocolate, under 250 kcal.
+Give me a dinner including fish and vegetables, under 600 kcal.
+Provide a breakfast including eggs and bacon, under 400 kcal.
+Suggest a recipe including pasta and cheese, under 500 kcal.
+Give me a vegan snack including fruit and nuts, under 200 kcal.
+Provide a dessert including pudding and vanilla, under 300 kcal.
+Suggest a lunch including soup and bread, under 500 kcal.
+Give me a dinner including curry and rice, under 600 kcal.
+Provide a breakfast including yogurt and granola, under 300 kcal.
+Suggest a snack including chips and dip, under 250 kcal.
+Give me a recipe including chicken and pasta, under 600 kcal.
+Provide a dessert including pie and apples, under 350 kcal.
+Suggest a lunch including salad and chicken, under 500 kcal.
+Give me a dinner including beef and vegetables, under 600 kcal.
+Provide a breakfast including waffles and syrup, under 400 kcal.
+Suggest a vegan dessert including chocolate and banana, under 300 kcal.
+Give me a snack including popcorn and butter, under 200 kcal.
+Provide a recipe including rice and vegetables, under 500 kcal.
+Suggest a dinner including pasta and seafood, under 600 kcal.
+Give me a breakfast including smoothie and berries, under 250 kcal.
+Provide a dessert including cake and frosting, under 400 kcal.
+Suggest a lunch including wrap and chicken, under 500 kcal.

@@ -1,8 +1,13 @@
 import json
-from langchain_ollama import ChatOllama
+import argparse
 from typing import List, Optional
 from pydantic import BaseModel
-import argparse
+from langchain_ollama import ChatOllama
+
+
+# =========================
+# Models
+# =========================
 
 class RecipeConstraints(BaseModel):
     category: Optional[str]
@@ -25,67 +30,84 @@ class RecipeConstraints(BaseModel):
     fat_g: Optional[List[Optional[float]]]
     unsaturated_fat_g: Optional[List[Optional[float]]]
 
-def sanitize_list_field(value):
-    if value is None:
+
+class GlobalConstraints(BaseModel):
+    # Aggregate nutrients across all meals
+    total_calories_kcal: Optional[List[Optional[float]]]
+    total_carbohydrates_g: Optional[List[Optional[float]]]
+    total_cholesterol_mg: Optional[List[Optional[float]]]
+    total_fiber_g: Optional[List[Optional[float]]]
+    total_protein_g: Optional[List[Optional[float]]]
+    total_saturated_fat_g: Optional[List[Optional[float]]]
+    total_sodium_mg: Optional[List[Optional[float]]]
+    total_sugar_g: Optional[List[Optional[float]]]
+    total_fat_g: Optional[List[Optional[float]]]
+    total_unsaturated_fat_g: Optional[List[Optional[float]]]
+
+    # Structure constraints
+    required_categories: List[str]
+    min_meals: Optional[int]
+    max_meals: Optional[int]
+    unique_categories: Optional[bool] # no duplicate meal types
+
+
+class MealPlanConstraints(BaseModel):
+    meals: List[RecipeConstraints]
+    global_constraints: GlobalConstraints
+
+
+# =========================
+# Sanitizers
+# =========================
+
+def sanitize_list(value):
+    if not value:
         return []
-    return value
+    return [str(v) for v in value if v is not None]
 
-def sanitize_nutrient_field(value):
 
-    fraction = 0.2
+def sanitize_nutrient(value):
+    FRACTION = 0.2
 
     if value is None:
         return [None, None]
 
-    # If model returns a single number
     if isinstance(value, (int, float)):
         v = float(value)
-        delta = v * fraction
-        return [v - delta, v + delta]
+        return [v * (1 - FRACTION), v * (1 + FRACTION)]
 
     if isinstance(value, list):
-        sanitized = []
+        cleaned = []
         for v in value:
             try:
-                sanitized.append(float(v) if v is not None else None)
-            except (ValueError, TypeError):
-                sanitized.append(None)
+                cleaned.append(float(v) if v is not None else None)
+            except:
+                cleaned.append(None)
 
-        # Case: single value like [300]
-        if len(sanitized) == 1 and sanitized[0] is not None:
-            v = sanitized[0]
-            delta = v * fraction
-            return [v - delta, v + delta]
+        if len(cleaned) == 1 and cleaned[0] is not None:
+            v = cleaned[0]
+            return [v * (1 - FRACTION), v * (1 + FRACTION)]
 
-        # Case: [300, 300]
-        if len(sanitized) >= 2 and sanitized[0] == sanitized[1] and sanitized[0] is not None:
-            v = sanitized[0]
-            delta = v * fraction
-            return [v - delta, v + delta]
+        while len(cleaned) < 2:
+            cleaned.append(None)
 
-        # Ensure exactly two values
-        while len(sanitized) < 2:
-            sanitized.append(None)
-
-        return sanitized[:2]
+        return cleaned[:2]
 
     return [None, None]
 
+
 def normalize_keys(data):
     key_map = {
-        "utensils_in": "utensils_incl"
+        "utensils_in": "utensils_incl",
     }
-
-    normalized = {}
-
-    for key, value in data.items():
-        corrected_key = key_map.get(key, key)
-        normalized[corrected_key] = value
-
-    return normalized
+    return {key_map.get(k, k): v for k, v in data.items()}
 
 
-def text_to_json(text) -> List[RecipeConstraints]:
+# =========================
+# LLM Extraction
+# =========================
+
+def text_to_mealplan(text: str) -> MealPlanConstraints:
     llm = ChatOllama(
         model="qwen3:4b",
         temperature=0,
@@ -95,30 +117,53 @@ def text_to_json(text) -> List[RecipeConstraints]:
     )
 
     prompt = f"""
-Extract recipe constraints from the user query.
+Extract recipe constraints.
 
-The query may contain MULTIPLE meals. Return a JSON LIST where each item represents ONE meal.
+There are TWO levels:
 
-Allowed keys (ALL must be present in each object):
-category, cuisine, ingredients_incl, ingredients_excl,
-utensils_incl, utensils_excl, time_class,
-calories_kcal, carbohydrates_g, cholesterol_mg,
-fiber_g, protein_g, saturated_fat_g, sodium_mg,
-sugar_g, fat_g, unsaturated_fat_g, extra.
+1. Meal-level constraints (each meal separately)
+2. Global constraints (apply across ALL meals)
+
+Return JSON in this format:
+{{
+  "meals": [
+    {{
+      "category": ...,
+      "cuisine": ...,
+      "ingredients_incl": [...],
+      "ingredients_excl": [...],
+      "utensils_incl": [...],
+      "utensils_excl": [...],
+      "time_class": ...,
+      "calories_kcal": [min, max],
+      "carbohydrates_g": [min, max],
+      "cholesterol_mg": [min, max],
+      "fiber_g": [min, max],
+      "protein_g": [min, max],
+      "saturated_fat_g": [min, max],
+      "sodium_mg": [min, max],
+      "sugar_g": [min, max],
+      "fat_g": [min, max],
+      "unsaturated_fat_g": [min, max]
+    }}
+  ],
+  "global_constraints": {{
+    "total_calories_kcal": [min, max],
+    "total_carbohydrates_g": [min, max],
+    "total_protein_g": [min, max],
+    "total_fat_g": [min, max],
+    "required_categories": [...],
+    "min_meals": int,
+    "max_meals": int
+  }}
+}}
 
 Rules:
-- Each object = ONE meal
-- Do NOT merge multiple meals into one object
-- If only ONE meal → return a list with ONE object
-- Do NOT assume missing info
-- Missing fields → null
-
-Formatting rules:
-- Ingredients & utensils → lists
-- Nutrients → [min, max]
-- If single value → [value, value]
-- "at least" → [value, null]
-- "at most" → [0, value]
+- Each meal = separate object
+- DO NOT merge meals
+- Missing → null
+- Lists must always be lists
+- Nutrients must always be [min, max]
 
 Time mapping:
 <=10 → very short
@@ -127,13 +172,14 @@ Time mapping:
 46-90 → long
 >90 → very long
 
-Category values:
-Breakfast, Lunch, Dinner, Snack, Appetizer, Dessert, null
+Global rules:
+- "total_*" applies to sum across meals
+- "breakfast + dinner" → required_categories
+- "3 meals" → min_meals = max_meals = 3
 
-STRICT OUTPUT:
-- ONLY valid JSON
-- MUST be a list
-- NO explanations
+STRICT:
+- ONLY JSON
+- NO explanation
 
 Query:
 {text}
@@ -143,48 +189,71 @@ Query:
     print(response.content)
 
     try:
-        raw_data = json.loads(response.content)
-
-        # Ensure list
-        if isinstance(raw_data, dict):
-            raw_data = [raw_data]
-
+        data = json.loads(response.content)
     except json.JSONDecodeError:
-        print("JSON parse failed, fallback to single empty constraint")
-        raw_data = [{}]
+        print("⚠️ JSON parsing failed, using fallback")
+        data = {"meals": [], "global_constraints": {}}
 
-    results = []
+    meals_raw = data.get("meals", [])
+    global_raw = data.get("global_constraints", {})
 
-    for item in raw_data:
+    # =========================
+    # Process meals
+    # =========================
+
+    meals = []
+
+    for item in meals_raw:
         item = normalize_keys(item)
 
-        # ---- sanitize lists ----
         for key in ["ingredients_incl", "ingredients_excl", "utensils_incl", "utensils_excl"]:
-            item[key] = sanitize_list_field(item.get(key))
+            item[key] = sanitize_list(item.get(key))
 
-        # ---- sanitize nutrients ----
-        nutrient_keys = [
+        for key in [
             "calories_kcal", "carbohydrates_g", "cholesterol_mg", "fiber_g",
-            "protein_g", "saturated_fat_g", "sodium_mg", "sugar_g",
-            "fat_g", "unsaturated_fat_g"
-        ]
-        for key in nutrient_keys:
-            item[key] = sanitize_nutrient_field(item.get(key))
+            "protein_g", "saturated_fat_g", "sodium_mg",
+            "sugar_g", "fat_g", "unsaturated_fat_g"
+        ]:
+            item[key] = sanitize_nutrient(item.get(key))
 
-        # ---- ensure scalar fields ----
         for key in ["category", "cuisine", "time_class"]:
-            if key not in item:
-                item[key] = None
+            item.setdefault(key, None)
 
-        results.append(RecipeConstraints(**item))
+        meals.append(RecipeConstraints(**item))
 
-    return results
+    # =========================
+    # Process global constraints
+    # =========================
 
+    for key in [
+        "total_calories_kcal",
+        "total_carbohydrates_g",
+        "total_protein_g",
+        "total_fat_g"
+    ]:
+        global_raw[key] = sanitize_nutrient(global_raw.get(key))
+
+    global_raw["required_categories"] = sanitize_list(global_raw.get("required_categories"))
+    global_raw.setdefault("min_meals", None)
+    global_raw.setdefault("max_meals", None)
+
+    global_constraints = GlobalConstraints(**global_raw)
+
+    return MealPlanConstraints(
+        meals=meals,
+        global_constraints=global_constraints
+    )
+
+
+# =========================
+# CLI
+# =========================
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Convert text prompt to RecipeConstraints JSON")
-    parser.add_argument("prompt", type=str, help="Text prompt describing recipe constraints")
+    parser = argparse.ArgumentParser(description="Convert text to MealPlanConstraints")
+    parser.add_argument("prompt", type=str)
     args = parser.parse_args()
 
-    result = text_to_json(args.prompt)
-    print(json.dumps(vars(result), indent=4))
+    result = text_to_mealplan(args.prompt)
+
+    print(json.dumps(result.model_dump(), indent=4))
