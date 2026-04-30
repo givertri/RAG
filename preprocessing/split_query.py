@@ -20,7 +20,7 @@ Split the following user request into exactly {n_meals} meal-specific search que
 Rules:
 - Each query should correspond to ONE meal
 - Keep them concise and optimized for recipe retrieval
-- Preserve important constraints (cuisine, diet, ingredients, etc.)
+- Preserve all constraints (cuisine, diet, ingredients, etc.)
 - Do NOT add explanations
 
 Output format (STRICT JSON):
