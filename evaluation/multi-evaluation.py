@@ -1,0 +1,270 @@
+import json
+import pandas as pd
+import csv
+import time
+from datetime import datetime
+from pathlib import Path
+
+from langchain_ollama import ChatOllama
+from langchain_core.messages import HumanMessage
+
+from components.indexer_ollama import OllamaIndexer
+from components.retriever_langchain_hybrid import LangchainRetrieverHybrid
+from components.retriever_langchain import LangchainRetriever
+from components.generator_llama import LlamaGenerator
+from core.rag_pipeline import RAGPipeline
+from preprocessing.text_to_json import text_to_json
+
+
+# ---------------------------------------------------------------------------
+# 1. Evaluator LLM
+# ---------------------------------------------------------------------------
+eval_llm = ChatOllama(
+    model="qwen3:4b",
+    temperature=0,
+    format="json",
+    reasoning=False,
+    base_url="http://203.57.40.79:10203"
+)
+
+
+def call_llm(prompt: str) -> dict:
+    response = eval_llm.invoke([HumanMessage(content=prompt)])
+    return json.loads(response.content)
+
+
+# ---------------------------------------------------------------------------
+# 2. Score computation
+# ---------------------------------------------------------------------------
+def compute_scores(data: dict) -> dict:
+    def ratio(items: list, key: str) -> float:
+        if not items:
+            return None
+        return sum(1 for x in items if x.get(key) is True) / len(items)
+
+    return {
+        "faithfulness": ratio(data.get("faithfulness", {}).get("claims", []), "supported"),
+        "context_precision": ratio(data.get("context_precision", {}).get("contexts", []), "relevant"),
+        "constraint_satisfaction": ratio(data.get("constraint_satisfaction", {}).get("constraints", []), "satisfied"),
+        "hallucination_rate": ratio(data.get("hallucination", {}).get("claims", []), "hallucinated"),
+    }
+
+
+# ---------------------------------------------------------------------------
+# 3. Evaluation prompt (single unified schema)
+# ---------------------------------------------------------------------------
+def evaluate_row(question, answer, contexts, constraints, system):
+    context_block = "\n\n".join(f"[Context {i+1}]: {c}" for i, c in enumerate(contexts))
+    constraints_str = json.dumps(constraints, indent=2)
+
+    eval_tasks = []
+
+    if system != "llm":
+        eval_tasks.append("""
+1. FAITHFULNESS: For each claim, is it supported by context? (true/false)
+2. CONTEXT_PRECISION: Is each context relevant? (true/false)
+""")
+
+    if system == "llm":
+        eval_tasks.append("""
+3. CONSTRAINT_SATISFACTION: Does answer satisfy constraints? (true/false)
+4. HALLUCINATION: Is each claim hallucinated (factually incorrect, fabricated, or not verifiable from general knowledge)? (true/false)
+""")
+    else:
+        eval_tasks.append("""
+3. CONSTRAINT_SATISFACTION: Does answer satisfy constraints? (true/false)
+""")
+
+    prompt = f"""
+You are an evaluation assistant scoring a QA / RAG system.
+
+--- QUESTION ---
+{question}
+
+--- CONTEXTS ---
+{context_block}
+
+--- ANSWER ---
+{answer}
+
+--- CONSTRAINTS ---
+{constraints_str}
+
+Evaluate ONLY the requested metrics:
+
+{''.join(eval_tasks)}
+
+Respond ONLY JSON with relevant fields.
+"""
+
+    try:
+        data = call_llm(prompt)
+        scores = compute_scores(data)
+        return {"scores": scores, "detail": data}
+    except Exception as e:
+        print(f"[WARN] Eval failed: {e}")
+        return {"scores": {}, "detail": {}}
+
+
+# ---------------------------------------------------------------------------
+# 4. System runners
+# ---------------------------------------------------------------------------
+def run_llm_only(prompt: str):
+    llm = LlamaGenerator(model="llama3.2:3b", stream=False)
+    answer = llm.generate(prompt, with_retrieval=False)
+    return answer, []
+
+
+def run_rag_hybrid(prompt, vectorstore, json_query):
+    retriever = LangchainRetrieverHybrid(vectorstore, json_query=json_query)
+    answer, docs = RAGPipeline(retriever, LlamaGenerator(stream=False)).run(prompt)
+    return answer, docs
+
+
+def run_rag_standard(prompt, vectorstore):
+    retriever = LangchainRetriever(vectorstore)
+    answer, docs = RAGPipeline(retriever, LlamaGenerator(stream=False)).run(prompt)
+    return answer, docs
+
+
+# ---------------------------------------------------------------------------
+# Writers
+# ---------------------------------------------------------------------------
+def write_csv_line(path, row, header=None):
+    exists = path.exists()
+    with open(path, "a", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=header or row.keys())
+        if not exists:
+            writer.writeheader()
+        writer.writerow(row)
+
+
+def write_json_line(path, row):
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+
+# ---------------------------------------------------------------------------
+# 5. MAIN evaluation
+# ---------------------------------------------------------------------------
+def run_evaluation(vectorstore, test_questions, output_dir="eval_results"):
+    output_dir = Path(output_dir)
+    output_dir.mkdir(exist_ok=True)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    csv_path = output_dir / f"eval_{timestamp}.csv"
+    json_path = output_dir / f"eval_{timestamp}.jsonl"
+
+    systems = ["llm", "rag_hybrid", "rag_standard"]
+
+    # aggregates per system
+    aggregate = {
+        s: {
+            "faithfulness": [],
+            "context_precision": [],
+            "constraint_satisfaction": [],
+            "hallucination_rate": [],
+            "rag_response_time": []
+        } for s in systems
+    }
+
+    for idx, item in enumerate(test_questions, 1):
+        question = item["question"]
+        print(f"\n[{idx}/{len(test_questions)}] {question}")
+
+        json_query = text_to_json(question)
+        constraints = json_query.model_dump()
+
+        for system in systems:
+            print(f"  -> {system}")
+
+            start = time.time()
+
+            if system == "llm":
+                answer, docs = run_llm_only(question)
+
+            elif system == "rag_hybrid":
+                answer, docs = run_rag_hybrid(question, vectorstore, json_query)
+
+            else:
+                answer, docs = run_rag_standard(question, vectorstore)
+
+            rag_time = time.time() - start
+            contexts = [d.page_content for d in docs]
+
+            result = evaluate_row(question, answer, contexts, constraints, system)
+            scores = result["scores"]
+
+            # build row
+            row = {
+                "system": system,
+                "question": question,
+                "answer": answer,
+                "rag_response_time": rag_time,
+            }
+
+            # apply metric filtering
+            if system == "llm":
+                row["constraint_satisfaction"] = scores.get("constraint_satisfaction")
+                row["hallucination_rate"] = scores.get("hallucination_rate")
+            else:
+                row["faithfulness"] = scores.get("faithfulness")
+                row["context_precision"] = scores.get("context_precision")
+                row["constraint_satisfaction"] = scores.get("constraint_satisfaction")
+
+            # update aggregates
+            for k in aggregate[system]:
+                if k in row and row[k] is not None:
+                    aggregate[system][k].append(row[k])
+
+            # compute running means
+            means = {
+                f"{k}_mean": (sum(v)/len(v) if v else None)
+                for k, v in aggregate[system].items()
+            }
+
+            print(f"     running means: {means}")
+
+            # write outputs
+            write_csv_line(csv_path, {**row, **means})
+            write_json_line(json_path, {
+                **row,
+                "contexts": contexts,
+                "constraints": constraints,
+                "scores": scores,
+                "running_mean": means,
+                "detail": result["detail"]
+            })
+
+    print(f"\nSaved CSV: {csv_path}")
+    print(f"Saved JSONL: {json_path}")
+
+    return pd.read_csv(csv_path)
+
+
+# ---------------------------------------------------------------------------
+# 6. Load questions
+# ---------------------------------------------------------------------------
+def load_questions_from_txt(filepath):
+    questions = []
+    with open(filepath, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#"):
+                questions.append({"question": line})
+    return questions
+
+
+# ---------------------------------------------------------------------------
+# 7. Entry point
+# ---------------------------------------------------------------------------
+if __name__ == "__main__":
+    test_set = load_questions_from_txt("evaluation/testset2.txt")
+
+    indexer = OllamaIndexer(collection_name="recipes")
+    vectorstore = indexer.get_vectorstore()
+
+    df = run_evaluation(vectorstore, test_set)
+
+    print("\nFINAL RESULTS:")
+    print(df.groupby("system").mean(numeric_only=True))

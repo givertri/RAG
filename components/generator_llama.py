@@ -25,7 +25,8 @@ class LlamaGenerator(BaseGenerator):
         context = "\n\n".join([d.page_content for d in docs])
 
         sysprompt = (
-            f"You are a helpful assistant.\n"
+            f"You are an assistant specialized in suggesting meals and recipes.\n\n"
+            f"Always give the recipe instructions in European metrics.\n\n"
             f"Question: {query}\n"
             f"Answer:"
         )
@@ -39,7 +40,7 @@ class LlamaGenerator(BaseGenerator):
         )
 
         syspromptRAG_updated = (
-            "You are a retrieval-augmented assistant specialized in suggesting meals and recipes. "
+            "You are a retrieval-augmented assistant specialized in suggesting meals and recipes."
             "Use the retrieved information below as your primary source of truth. If the information is incomplete, "
             "you may supplement it with general cooking knowledge, but do not contradict the retrieved content.\n\n"
 
