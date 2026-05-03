@@ -28,8 +28,17 @@ class RecipeConstraints(BaseModel):
     unsaturated_fat_g: Optional[List[Optional[float]]]
 
 def sanitize_list_field(value):
-    if value is None:
+    if value is None or value == "null":
         return []
+    
+    # single string instead of list
+    if isinstance(value, str):
+        return [value]
+    
+    # Ensure list
+    if not isinstance(value, list):
+        return []
+    
     return value
 
 def sanitize_nutrient_field(value):

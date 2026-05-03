@@ -70,12 +70,12 @@ def evaluate_row(question, answer, contexts, constraints, system):
 
     if system == "llm":
         eval_tasks.append("""
-3. CONSTRAINT_SATISFACTION: Does answer satisfy constraints? (true/false)
+3. CONSTRAINT_SATISFACTION: Using the extracted constraints, state whether the answer respects each constraint. (true/false)
 4. HALLUCINATION: Is each claim hallucinated (factually incorrect, fabricated, or not verifiable from general knowledge)? (true/false)
 """)
     else:
         eval_tasks.append("""
-3. CONSTRAINT_SATISFACTION: Does answer satisfy constraints? (true/false)
+3. CONSTRAINT_SATISFACTION: Using the extracted constraints, state whether the answer respects each constraint. (true/false)
 """)
 
     prompt = f"""
@@ -97,7 +97,13 @@ Evaluate ONLY the requested metrics:
 
 {''.join(eval_tasks)}
 
-Respond ONLY JSON with relevant fields.
+Respond ONLY JSON with relevant fields (empty list if not relevant):
+{{
+    "faithfulness": {{"claims": [{{"claim": "", "supported": true}}]}}, 
+    "context_precision": {{"contexts": [{{"relevant": true}}]}}, 
+    "constraint_satisfaction": {{"constraints": [{{"satisfied": true}}]}}, 
+    "hallucination": {{"claims": [{{"claim": "", "hallucinated": false}}]}}
+}}
 """
 
     try:
@@ -157,6 +163,25 @@ def write_csv_line(path, row, header=None):
             writer.writeheader()
         writer.writerow(row)
 
+CSV_FIELDS_REDUCED = [
+    "system",
+    "response_time",
+    "faithfulness",
+    "context_precision",
+    "constraint_satisfaction",
+    "hallucination_rate",
+]
+
+def write_csv_line_reduced(path, row):
+    exists = path.exists()
+    with open(path, "a", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=CSV_FIELDS_REDUCED, quoting=csv.QUOTE_ALL)
+        if not exists:
+            writer.writeheader()
+
+        # filter only required keys
+        filtered_row = {k: row.get(k) for k in CSV_FIELDS_REDUCED}
+        writer.writerow(filtered_row)
 
 def write_json_line(path, row):
     with open(path, "a", encoding="utf-8") as f:
@@ -172,6 +197,7 @@ def run_evaluation(vectorstore, test_questions, output_dir="eval_results"):
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     csv_path = output_dir / f"eval_{timestamp}.csv"
+    csv_reduced_path = output_dir / f"eval_{timestamp}_reduced.csv"
     json_path = output_dir / f"eval_{timestamp}.jsonl"
 
     systems = ["llm", "rag_hybrid", "rag_standard"]
@@ -222,6 +248,11 @@ def run_evaluation(vectorstore, test_questions, output_dir="eval_results"):
                 "response_time": resp_time,
             }
 
+            row["faithfulness"] = None
+            row["context_precision"] = None
+            row["constraint_satisfaction"] = None
+            row["hallucination_rate"] = None
+
             # apply metric filtering
             if system == "llm":
                 row["constraint_satisfaction"] = scores.get("constraint_satisfaction")
@@ -249,6 +280,7 @@ def run_evaluation(vectorstore, test_questions, output_dir="eval_results"):
 
             # write outputs
             write_csv_line(csv_path, {**row, **means})
+            write_csv_line_reduced(csv_reduced_path, row)
             write_json_line(json_path, {
                 **row,
                 "contexts": contexts,
