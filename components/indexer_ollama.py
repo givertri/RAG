@@ -1,17 +1,20 @@
 from core.base_indexer import BaseIndexer
 from langchain_milvus import Milvus, BM25BuiltInFunction
 from langchain_ollama import OllamaEmbeddings
+from dotenv import load_dotenv
+import os
 
 
 class OllamaIndexer(BaseIndexer):
 
     def __init__(self, collection_name="recipes"):
+        load_dotenv(dotenv_path="env.env")
         self.collection_name = collection_name
 
         # Use Ollama local embedding model
         self.embeddings = OllamaEmbeddings(
             model="nomic-embed-text:latest",
-            base_url="http://203.57.40.79:10203"  # Ollama URL server
+            base_url=os.getenv("RUNPOD_URL")  # Ollama URL server
             #base_url="http://localhost:11434"  # Ollama URL local
         )
 

@@ -1,15 +1,17 @@
 import json
 from langchain_community.chat_models import ChatOllama
 from langchain_core.messages import HumanMessage
-
+from dotenv import load_dotenv
+import os
 
 def split_query(text, n_meals):
+    load_dotenv(dotenv_path="env.env")
     llm = ChatOllama(
         model="qwen3:4b",
         temperature=0,
         format="json",
         reasoning=False,
-        base_url="http://203.57.40.79:10203"
+        base_url=os.getenv("RUNPOD_URL")
     )
 
     prompt = f"""

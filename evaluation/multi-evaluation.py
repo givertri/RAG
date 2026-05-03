@@ -14,17 +14,20 @@ from components.retriever_langchain import LangchainRetriever
 from components.generator_llama import LlamaGenerator
 from core.rag_pipeline import RAGPipeline
 from preprocessing.text_to_json import text_to_json
-
+from dotenv import load_dotenv
+import os
 
 # ---------------------------------------------------------------------------
 # 1. Evaluator LLM
 # ---------------------------------------------------------------------------
+load_dotenv(dotenv_path="env.env")
+
 eval_llm = ChatOllama(
     model="qwen3:4b",
     temperature=0,
     format="json",
     reasoning=False,
-    base_url="http://203.57.40.79:10203"
+    base_url=os.getenv("RUNPOD_URL")
 )
 
 
@@ -61,7 +64,7 @@ def evaluate_row(question, answer, contexts, constraints, system):
 
     if system != "llm":
         eval_tasks.append("""
-1. FAITHFULNESS: For each claim, is it supported by context? (true/false)
+1. FAITHFULNESS: For each claim, is it supported by context? Numerical/unit conversions are considered faithful if and only if they are mathematically correct given a value in the retrieved context. (true/false)
 2. CONTEXT_PRECISION: Is each context relevant? (true/false)
 """)
 
@@ -110,8 +113,8 @@ Respond ONLY JSON with relevant fields.
 # 4. System runners
 # ---------------------------------------------------------------------------
 def run_llm_only(prompt: str):
-    llm = LlamaGenerator(model="llama3.2:3b", stream=False)
-    answer = llm.generate(prompt, with_retrieval=False)
+    llm = LlamaGenerator(stream=False)
+    answer = llm.generate(prompt, with_retrieval=False, docs=[])
     return answer, []
 
 
@@ -130,10 +133,26 @@ def run_rag_standard(prompt, vectorstore):
 # ---------------------------------------------------------------------------
 # Writers
 # ---------------------------------------------------------------------------
+CSV_FIELDS = [
+    "system",
+    "question",
+    "answer",
+    "response_time",
+    "faithfulness",
+    "context_precision",
+    "constraint_satisfaction",
+    "hallucination_rate",
+    "faithfulness_mean",
+    "context_precision_mean",
+    "constraint_satisfaction_mean",
+    "hallucination_rate_mean",
+    "response_time_mean",
+]
+
 def write_csv_line(path, row, header=None):
     exists = path.exists()
     with open(path, "a", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=header or row.keys())
+        writer = csv.DictWriter(f, fieldnames=CSV_FIELDS, quoting=csv.QUOTE_ALL)
         if not exists:
             writer.writeheader()
         writer.writerow(row)
@@ -164,7 +183,7 @@ def run_evaluation(vectorstore, test_questions, output_dir="eval_results"):
             "context_precision": [],
             "constraint_satisfaction": [],
             "hallucination_rate": [],
-            "rag_response_time": []
+            "response_time": []
         } for s in systems
     }
 
@@ -189,7 +208,7 @@ def run_evaluation(vectorstore, test_questions, output_dir="eval_results"):
             else:
                 answer, docs = run_rag_standard(question, vectorstore)
 
-            rag_time = time.time() - start
+            resp_time = time.time() - start
             contexts = [d.page_content for d in docs]
 
             result = evaluate_row(question, answer, contexts, constraints, system)
@@ -200,7 +219,7 @@ def run_evaluation(vectorstore, test_questions, output_dir="eval_results"):
                 "system": system,
                 "question": question,
                 "answer": answer,
-                "rag_response_time": rag_time,
+                "response_time": resp_time,
             }
 
             # apply metric filtering
@@ -218,10 +237,13 @@ def run_evaluation(vectorstore, test_questions, output_dir="eval_results"):
                     aggregate[system][k].append(row[k])
 
             # compute running means
-            means = {
-                f"{k}_mean": (sum(v)/len(v) if v else None)
-                for k, v in aggregate[system].items()
-            }
+            means = {}
+            for k, values in aggregate[system].items():
+                valid = [v for v in values if v is not None]
+                if len(valid) == 0:
+                    means[f"{k}_mean"] = None
+                else:
+                    means[f"{k}_mean"] = sum(valid) / len(valid)
 
             print(f"     running means: {means}")
 
@@ -239,7 +261,7 @@ def run_evaluation(vectorstore, test_questions, output_dir="eval_results"):
     print(f"\nSaved CSV: {csv_path}")
     print(f"Saved JSONL: {json_path}")
 
-    return pd.read_csv(csv_path)
+    return pd.read_csv(csv_path, engine="python")
 
 
 # ---------------------------------------------------------------------------

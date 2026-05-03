@@ -134,7 +134,12 @@ It will run with:
 ---
 
 ## Batch Evaluation
+
+### Constraint-Aware RAG only
 ```bash
 python -m evaluation.evaluation_short
 ```
-
+### All systems: LLM-only, Standard RAG, Constraint-Aware RAG
+```bash
+python -m evaluation.multi-evaluation
+```

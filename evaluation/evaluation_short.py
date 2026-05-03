@@ -12,17 +12,20 @@ from components.retriever_langchain_hybrid import LangchainRetrieverHybrid
 from components.generator_llama import LlamaGenerator
 from core.rag_pipeline import RAGPipeline
 from preprocessing.text_to_json import text_to_json
-
+from dotenv import load_dotenv
+import os
 
 # ---------------------------------------------------------------------------
 # 1. Evaluator LLM
 # ---------------------------------------------------------------------------
+load_dotenv(dotenv_path="env.env")
+
 eval_llm = ChatOllama(
     model="qwen3:4b",
     temperature=0,
     format="json",
     reasoning=False,
-    base_url="http://203.57.40.79:10203"
+    base_url=os.getenv("RUNPOD_URL")
 )
 
 

@@ -1,6 +1,7 @@
 from core.base_generator import BaseGenerator
 from langchain_ollama import ChatOllama
 from dotenv import load_dotenv
+import os
 
 
 class LlamaGenerator(BaseGenerator):
@@ -14,7 +15,7 @@ class LlamaGenerator(BaseGenerator):
         self.llm = ChatOllama(
             model="llama3.2:latest",
             temperature=0.2,
-            base_url="http://203.57.40.79:10203"
+            base_url=os.getenv("RUNPOD_URL")
         )
 
     def generate(self, query, docs, with_retrieval, stream: bool = None):
@@ -26,22 +27,20 @@ class LlamaGenerator(BaseGenerator):
 
         sysprompt = (
             f"You are an assistant specialized in suggesting meals and recipes.\n\n"
-            f"Always give the recipe instructions in European metrics.\n\n"
+            
+            "When responding:\n"
+            "- Provide a clear recipe with a title.\n"
+            "- Include a short description of the dish.\n"
+            "- List all ingredients with quantities in European metric units (grams, milliliters, etc.).\n"
+            "- Provide step-by-step cooking instructions in a clear, logical order.\n"
+            "- Keep the answer concise but complete.\n\n"
+
             f"Question: {query}\n"
             f"Answer:"
         )
 
         syspromptRAG = (
-            f"You are a meal-suggesting RAG. Use the retrieved information (which is correct) in your answer.\n\n"
-            f"Always give the recipe instructions in European metrics.\n\n"
-            f"Retrieved information:\n{context}\n\n"
-            f"Question: {query}\n"
-            f"Answer:"
-        )
-
-        syspromptRAG_updated = (
-            "You are a retrieval-augmented assistant specialized in suggesting meals and recipes."
-            "Use the retrieved information below as your primary source of truth. If the information is incomplete, "
+            f"You are a retrieval-augmented assistant specialized in suggesting meals and recipes. Use the retrieved information below as your primary source of truth. If the information is incomplete, "
             "you may supplement it with general cooking knowledge, but do not contradict the retrieved content.\n\n"
 
             "When responding:\n"
@@ -53,8 +52,8 @@ class LlamaGenerator(BaseGenerator):
 
             "Retrieved information:\n"
             f"{context}\n\n"
-            f"User question: {query}\n\n"
-            "Answer:"
+            f"Question: {query}\n"
+            f"Answer:"
         )
 
         prompt = syspromptRAG if with_retrieval else sysprompt

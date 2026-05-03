@@ -3,6 +3,8 @@ from langchain_ollama import ChatOllama
 from typing import List, Optional
 from pydantic import BaseModel
 import argparse
+from dotenv import load_dotenv
+import os
 
 class RecipeConstraints(BaseModel):
     category: Optional[str]
@@ -85,12 +87,13 @@ def normalize_keys(data):
     return normalized
 
 def text_to_json(text):
+    load_dotenv(dotenv_path="env.env")
     llm = ChatOllama(
         model="qwen3:4b",
         temperature=0,
         format='json',
         reasoning=False,
-        base_url="http://203.57.40.79:10203"
+        base_url=os.getenv("RUNPOD_URL")
     )
 
     prompt = f"""
