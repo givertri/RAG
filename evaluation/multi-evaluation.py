@@ -23,7 +23,7 @@ import os
 load_dotenv(dotenv_path="env.env")
 
 eval_llm = ChatOllama(
-    model="qwen3:4b",
+    model="qwen3:14b",
     temperature=0,
     format="json",
     reasoning=False,
@@ -33,6 +33,7 @@ eval_llm = ChatOllama(
 
 def call_llm(prompt: str) -> dict:
     response = eval_llm.invoke([HumanMessage(content=prompt)])
+    print(response.content)
     return json.loads(response.content)
 
 
@@ -64,18 +65,18 @@ def evaluate_row(question, answer, contexts, constraints, system):
 
     if system != "llm":
         eval_tasks.append("""
-1. FAITHFULNESS: For each claim, is it supported by context? Numerical/unit conversions are considered faithful if and only if they are mathematically correct given a value in the retrieved context. (true/false)
-2. CONTEXT_PRECISION: Is each context relevant? (true/false)
+1. FAITHFULNESS: For each claim in the answer, is it supported by the retrieved contexts? Numerical/unit conversions are considered faithful if and only if they are mathematically correct given a value in the retrieved context. (true/false)
+2. CONTEXT_PRECISION: For each context document, state whether it is relevant to the question. (true/false)
 """)
 
     if system == "llm":
         eval_tasks.append("""
-3. CONSTRAINT_SATISFACTION: Using the extracted constraints, state whether the answer respects each constraint. (true/false)
-4. HALLUCINATION: Is each claim hallucinated (factually incorrect, fabricated, or not verifiable from general knowledge)? (true/false)
+3. CONSTRAINT_SATISFACTION: For each extracted constraint, state whether the answer respects the constraint. (true/false)
+4. HALLUCINATION: For each claim in the answer, state whether it is factually incorrect, fabricated, inconsistent, or not verifiable from general knowledge. (true/false)
 """)
     else:
         eval_tasks.append("""
-3. CONSTRAINT_SATISFACTION: Using the extracted constraints, state whether the answer respects each constraint. (true/false)
+3. CONSTRAINT_SATISFACTION: For each extracted constraint, state whether the answer respects the constraint. (true/false)
 """)
 
     prompt = f"""
@@ -84,13 +85,13 @@ You are an evaluation assistant scoring a QA / RAG system.
 --- QUESTION ---
 {question}
 
---- CONTEXTS ---
+--- RETRIEVED CONTEXTS ---
 {context_block}
 
 --- ANSWER ---
 {answer}
 
---- CONSTRAINTS ---
+--- EXTRACTED CONSTRAINTS ---
 {constraints_str}
 
 Evaluate ONLY the requested metrics:

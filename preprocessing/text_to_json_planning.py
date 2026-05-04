@@ -111,7 +111,7 @@ def normalize_keys(data):
 def text_to_mealplan(text: str) -> MealPlanConstraints:
     load_dotenv(dotenv_path="env.env")
     llm = ChatOllama(
-        model="qwen3:4b",
+        model="qwen3:14b",
         temperature=0,
         format="json",
         reasoning=False,

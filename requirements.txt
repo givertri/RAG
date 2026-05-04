@@ -8,3 +8,6 @@ pymilvus
 regex
 ollama
 pydantic
+ipykernel
+seaborn
+matplotlib
