@@ -72,7 +72,16 @@ def evaluate_row(question, answer, contexts, constraints, system):
     if system == "llm":
         eval_tasks.append("""
 3. CONSTRAINT_SATISFACTION: For each extracted constraint, state whether the answer respects the constraint. (true/false)
-4. HALLUCINATION: For each claim in the answer, state whether it is factually incorrect, fabricated, inconsistent, or not verifiable from general knowledge. (true/false)
+4. HALLUCINATION: For each claim in the answer, state whether the claim is unsupported, unverifiable, speculative, internally inconsistent, or likely fabricated. (true/false)
+A claim should be marked hallucinated=true if:
+- it cannot be verified from reliable culinary/nutritional knowledge,
+- it invents nutritional values, cooking properties, cuisines, or ingredients,
+- it asserts unsupported health claims,
+- it contradicts known ingredient properties,
+- it overstates certainty,
+- or the statement is plausible-sounding but unverifiable.
+
+When uncertain, prefer hallucinated=true.
 """)
     else:
         eval_tasks.append("""
@@ -192,7 +201,7 @@ def write_json_line(path, row):
 # ---------------------------------------------------------------------------
 # 5. MAIN evaluation
 # ---------------------------------------------------------------------------
-def run_evaluation(vectorstore, test_questions, output_dir="eval_results"):
+def run_evaluation(vectorstore, test_questions, output_dir="eval_results", start_index=0):
     output_dir = Path(output_dir)
     output_dir.mkdir(exist_ok=True)
 
@@ -214,7 +223,7 @@ def run_evaluation(vectorstore, test_questions, output_dir="eval_results"):
         } for s in systems
     }
 
-    for idx, item in enumerate(test_questions, 1):
+    for idx, item in enumerate(test_questions[start_index:], start=start_index + 1):
         question = item["question"]
         print(f"\n[{idx}/{len(test_questions)}] {question}")
 
