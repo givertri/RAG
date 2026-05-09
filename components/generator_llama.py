@@ -23,7 +23,10 @@ class LlamaGenerator(BaseGenerator):
         if stream is None:
             stream = self.stream
 
-        context = "\n\n".join([d.page_content for d in docs])
+        context = "\n\n".join([
+            f"{d.page_content}\nMetadata:\n{d.metadata}"
+            for d in docs
+        ])
 
         sysprompt = (
             f"You are an assistant specialized in suggesting meals and recipes.\n\n"
@@ -57,6 +60,7 @@ class LlamaGenerator(BaseGenerator):
         )
 
         prompt = syspromptRAG if with_retrieval else sysprompt
+        print(prompt)
 
         if stream:
             full_response = ""

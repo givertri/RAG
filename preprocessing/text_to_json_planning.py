@@ -31,25 +31,29 @@ class RecipeConstraints(BaseModel):
     fat_g: Optional[List[Optional[float]]]
     unsaturated_fat_g: Optional[List[Optional[float]]]
 
+    extra: Optional[str]
+
 
 class GlobalConstraints(BaseModel):
     # Aggregate nutrients across all meals
-    total_calories_kcal: Optional[List[Optional[float]]]
-    total_carbohydrates_g: Optional[List[Optional[float]]]
-    total_cholesterol_mg: Optional[List[Optional[float]]]
-    total_fiber_g: Optional[List[Optional[float]]]
-    total_protein_g: Optional[List[Optional[float]]]
-    total_saturated_fat_g: Optional[List[Optional[float]]]
-    total_sodium_mg: Optional[List[Optional[float]]]
-    total_sugar_g: Optional[List[Optional[float]]]
-    total_fat_g: Optional[List[Optional[float]]]
-    total_unsaturated_fat_g: Optional[List[Optional[float]]]
+    total_calories_kcal: Optional[List[Optional[float]]] = None
+    total_carbohydrates_g: Optional[List[Optional[float]]] = None
+    total_cholesterol_mg: Optional[List[Optional[float]]] = None
+    total_fiber_g: Optional[List[Optional[float]]] = None
+    total_protein_g: Optional[List[Optional[float]]] = None
+    total_saturated_fat_g: Optional[List[Optional[float]]] = None
+    total_sodium_mg: Optional[List[Optional[float]]] = None
+    total_sugar_g: Optional[List[Optional[float]]] = None
+    total_fat_g: Optional[List[Optional[float]]] = None
+    total_unsaturated_fat_g: Optional[List[Optional[float]]] = None
 
     # Structure constraints
-    required_categories: List[str]
-    min_meals: Optional[int]
-    max_meals: Optional[int]
-    unique_categories: Optional[bool] # no duplicate meal types
+    required_categories: Optional[List[Optional[str]]] = None
+    min_meals: Optional[int] = None
+    max_meals: Optional[int] = None
+    unique_categories: Optional[bool] = None  # no duplicate meal types
+
+    extra: Optional[str] = None
 
 
 class MealPlanConstraints(BaseModel):
@@ -73,6 +77,7 @@ def sanitize_nutrient(value):
     if value is None:
         return [None, None]
 
+    # If model returns a single number
     if isinstance(value, (int, float)):
         v = float(value)
         return [v * (1 - FRACTION), v * (1 + FRACTION)]
@@ -82,13 +87,20 @@ def sanitize_nutrient(value):
         for v in value:
             try:
                 cleaned.append(float(v) if v is not None else None)
-            except:
+            except (ValueError, TypeError):  # FIX 5: no bare except
                 cleaned.append(None)
 
+        # Case: single value like [300]
         if len(cleaned) == 1 and cleaned[0] is not None:
             v = cleaned[0]
             return [v * (1 - FRACTION), v * (1 + FRACTION)]
 
+        # FIX 1: Case: equal values like [300, 300] — expand with ±20%
+        if len(cleaned) >= 2 and cleaned[0] == cleaned[1] and cleaned[0] is not None:
+            v = cleaned[0]
+            return [v * (1 - FRACTION), v * (1 + FRACTION)]
+
+        # Ensure exactly two values
         while len(cleaned) < 2:
             cleaned.append(None)
 
@@ -119,7 +131,7 @@ def text_to_mealplan(text: str) -> MealPlanConstraints:
     )
 
     prompt = f"""
-Extract recipe constraints.
+Extract the constraints from the question and output ONLY valid JSON. Response should only contain data from the question.
 
 There are TWO levels:
 
@@ -146,38 +158,52 @@ Return JSON in this format:
       "sodium_mg": [min, max],
       "sugar_g": [min, max],
       "fat_g": [min, max],
-      "unsaturated_fat_g": [min, max]
+      "unsaturated_fat_g": [min, max],
+      "extra": ...
     }}
   ],
   "global_constraints": {{
     "total_calories_kcal": [min, max],
     "total_carbohydrates_g": [min, max],
+    "total_cholesterol_mg": [min, max],
+    "total_fiber_g": [min, max],
     "total_protein_g": [min, max],
+    "total_saturated_fat_g": [min, max],
+    "total_sodium_mg": [min, max],
+    "total_sugar_g": [min, max],
     "total_fat_g": [min, max],
+    "total_unsaturated_fat_g": [min, max],
     "required_categories": [...],
     "min_meals": int,
-    "max_meals": int
+    "max_meals": int,
+    "unique_categories": bool,
+    "extra": ...
   }}
 }}
 
 Rules:
 - Each meal = separate object
 - DO NOT merge meals
-- Missing → null
+- Do NOT assume missing information such as ingredients.
+- If information is not present, use null.
 - Lists must always be lists
-- Nutrients must always be [min, max]
+- Nutritional values must be [min, max]. Min and max must be different numbers. If only a single value is given, return [value, value]. If user mentions "at least" or "more than", return [value, null]. If user mentions "at most" or "less than", return [0, value]. 
+- Possible time_class values: very short, short, average, long, very long, null.
+- Possible category values: Breakfast, Lunch, Dinner, Snack, Appetizer, Dessert, null
+- Do not add any comments with # or //
+- The extra field can ONLY contain short, structured constraints that do not fit any other key or null.
 
-Time mapping:
-<=10 → very short
-11-25 → short
-26-45 → average
-46-90 → long
->90 → very long
+time_class mapping:
+<=10 minutes → very short
+11-25 minutes → short
+26-45 minutes → average
+46-90 minutes → long
+>90 minutes → very long
 
 Global rules:
 - "total_*" applies to sum across meals
-- "breakfast + dinner" → required_categories
-- "3 meals" → min_meals = max_meals = 3
+- Example: "breakfast + dinner" → required_categories
+- Example: "3 meals" → min_meals = max_meals = 3
 
 STRICT:
 - ONLY JSON
@@ -193,7 +219,7 @@ Query:
     try:
         data = json.loads(response.content)
     except json.JSONDecodeError:
-        print("⚠️ JSON parsing failed, using fallback")
+        print("JSON parsing failed, using fallback")
         data = {"meals": [], "global_constraints": {}}
 
     meals_raw = data.get("meals", [])
@@ -221,23 +247,29 @@ Query:
         for key in ["category", "cuisine", "time_class"]:
             item.setdefault(key, None)
 
+        item.setdefault("extra", None)
+
         meals.append(RecipeConstraints(**item))
 
     # =========================
     # Process global constraints
     # =========================
 
+    # FIX 4: normalize_keys on global_raw too
+    global_raw = normalize_keys(global_raw)
+
     for key in [
-        "total_calories_kcal",
-        "total_carbohydrates_g",
-        "total_protein_g",
-        "total_fat_g"
+        "total_calories_kcal", "total_carbohydrates_g", "total_cholesterol_mg",
+        "total_fiber_g", "total_protein_g", "total_saturated_fat_g",
+        "total_sodium_mg", "total_sugar_g", "total_fat_g", "total_unsaturated_fat_g"
     ]:
         global_raw[key] = sanitize_nutrient(global_raw.get(key))
 
     global_raw["required_categories"] = sanitize_list(global_raw.get("required_categories"))
     global_raw.setdefault("min_meals", None)
     global_raw.setdefault("max_meals", None)
+    global_raw.setdefault("unique_categories", None)
+    global_raw.setdefault("extra", None)  # FIX 3: prevent ValidationError on missing extra
 
     global_constraints = GlobalConstraints(**global_raw)
 

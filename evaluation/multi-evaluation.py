@@ -149,6 +149,26 @@ def run_rag_standard(prompt, vectorstore):
 # ---------------------------------------------------------------------------
 # Writers
 # ---------------------------------------------------------------------------
+def sanitize_metadata(meta):
+    """Recursively convert objects into JSON-serializable structures."""
+
+    # primitives
+    if meta is None or isinstance(meta, (str, int, float, bool)):
+        return meta
+
+    # dicts
+    if isinstance(meta, dict):
+        return {str(k): sanitize_metadata(v) for k, v in meta.items()}
+
+    # lists / tuples / protobuf repeated containers
+    if isinstance(meta, (list, tuple)) or (
+        hasattr(meta, "__iter__") and not isinstance(meta, (str, bytes))
+    ):
+        return [sanitize_metadata(v) for v in meta]
+
+    # fallback
+    return str(meta)
+
 CSV_FIELDS = [
     "system",
     "question",
@@ -245,7 +265,7 @@ def run_evaluation(vectorstore, test_questions, output_dir="eval_results", start
                 answer, docs = run_rag_standard(question, vectorstore)
 
             resp_time = time.time() - start
-            contexts = [d.page_content for d in docs]
+            contexts = [{"content": d.page_content, "metadata": d.metadata} for d in docs]
 
             result = evaluate_row(question, answer, contexts, constraints, system)
             scores = result["scores"]
@@ -291,14 +311,14 @@ def run_evaluation(vectorstore, test_questions, output_dir="eval_results", start
             # write outputs
             write_csv_line(csv_path, {**row, **means})
             write_csv_line_reduced(csv_reduced_path, row)
-            write_json_line(json_path, {
+            write_json_line(json_path, sanitize_metadata({
                 **row,
                 "contexts": contexts,
                 "constraints": constraints,
                 "scores": scores,
                 "running_mean": means,
                 "detail": result["detail"]
-            })
+            }))
 
     print(f"\nSaved CSV: {csv_path}")
     print(f"Saved JSONL: {json_path}")

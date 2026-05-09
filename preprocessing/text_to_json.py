@@ -27,6 +27,8 @@ class RecipeConstraints(BaseModel):
     fat_g: Optional[List[Optional[float]]]
     unsaturated_fat_g: Optional[List[Optional[float]]]
 
+    extra: Optional[str]
+
 def sanitize_list_field(value):
     if value is None or value == "null":
         return []
