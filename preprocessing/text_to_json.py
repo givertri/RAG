@@ -97,14 +97,17 @@ def normalize_keys(data):
 
     return normalized
 
-def text_to_json(text):
+def text_to_json(text, seed: None):
     load_dotenv(dotenv_path="env.env")
     llm = ChatOllama(
         model="qwen3:14b",
         temperature=0,
         format='json',
         reasoning=False,
-        base_url=os.getenv("RUNPOD_URL")
+        base_url=os.getenv("RUNPOD_URL"),
+        options={
+            "seed": seed
+        }
     )
 
     prompt = f"""

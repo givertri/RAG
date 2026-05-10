@@ -5,8 +5,7 @@ import os
 
 
 class LlamaGenerator(BaseGenerator):
-
-    def __init__(self, stream: bool = True):
+    def __init__(self, stream: bool = True, seed = None):
         load_dotenv(dotenv_path="env.env")
 
         self.stream = stream
@@ -15,7 +14,10 @@ class LlamaGenerator(BaseGenerator):
         self.llm = ChatOllama(
             model="llama3.2:latest",
             temperature=0.2,
-            base_url=os.getenv("RUNPOD_URL")
+            base_url=os.getenv("RUNPOD_URL"),
+            options={
+                "seed": seed
+            }
         )
 
     def generate(self, query, docs, with_retrieval, stream: bool = None):

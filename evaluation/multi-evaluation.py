@@ -17,6 +17,9 @@ from preprocessing.text_to_json import text_to_json
 from dotenv import load_dotenv
 import os
 
+SEEDS = [42, 43, 44]
+SEED = SEEDS[0]
+
 # ---------------------------------------------------------------------------
 # 1. Evaluator LLM
 # ---------------------------------------------------------------------------
@@ -27,7 +30,10 @@ eval_llm = ChatOllama(
     temperature=0,
     format="json",
     reasoning=False,
-    base_url=os.getenv("RUNPOD_URL")
+    base_url=os.getenv("RUNPOD_URL"),
+    options={
+        "seed": SEED
+    }
 )
 
 
@@ -129,7 +135,7 @@ Respond ONLY JSON with relevant fields (empty list if not relevant):
 # 4. System runners
 # ---------------------------------------------------------------------------
 def run_llm_only(prompt: str):
-    llm = LlamaGenerator(stream=False)
+    llm = LlamaGenerator(stream=False, seed=SEED)
     answer = llm.generate(prompt, with_retrieval=False, docs=[])
     return answer, []
 
@@ -247,7 +253,7 @@ def run_evaluation(vectorstore, test_questions, output_dir="eval_results", start
         question = item["question"]
         print(f"\n[{idx}/{len(test_questions)}] {question}")
 
-        json_query = text_to_json(question)
+        json_query = text_to_json(question, seed=SEED)
         constraints = json_query.model_dump()
 
         for system in systems:
