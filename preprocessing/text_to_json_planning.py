@@ -120,14 +120,17 @@ def normalize_keys(data):
 # LLM Extraction
 # =========================
 
-def text_to_mealplan(text: str) -> MealPlanConstraints:
+def text_to_mealplan(text: str, seed = None) -> MealPlanConstraints:
     load_dotenv(dotenv_path="env.env")
     llm = ChatOllama(
         model="qwen3:14b",
         temperature=0,
         format="json",
         reasoning=False,
-        base_url=os.getenv("RUNPOD_URL")
+        base_url=os.getenv("RUNPOD_URL"),
+        options={
+            "seed": seed
+        }
     )
 
     prompt = f"""

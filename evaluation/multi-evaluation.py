@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 import os
 
 SEEDS = [42, 43, 44]
-SEED = SEEDS[0]
+SEED = SEEDS[1]
 
 # ---------------------------------------------------------------------------
 # 1. Evaluator LLM

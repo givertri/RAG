@@ -25,5 +25,3 @@ for _ in range(100):
         q = f"Show me a {random.choice(meals)} under {random.randint(500, 800)} calories but with more than {random.randint(20, 40)}g of protein."
     
     new_queries.append(q)
-
-# This list was then cleaned and saved to the .txt file provided above.
