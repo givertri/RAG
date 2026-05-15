@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 import os
 
 SEEDS = [42, 43, 44]
-SEED = SEEDS[1]
+SEED = SEEDS[2]
 
 # ---------------------------------------------------------------------------
 # 1. Evaluator LLM
@@ -349,7 +349,7 @@ def load_questions_from_txt(filepath):
 # 7. Entry point
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    test_set = load_questions_from_txt("evaluation/testset2.txt")
+    test_set = load_questions_from_txt("evaluation/test_sets/testset.txt")
 
     indexer = OllamaIndexer(collection_name="recipes")
     vectorstore = indexer.get_vectorstore()

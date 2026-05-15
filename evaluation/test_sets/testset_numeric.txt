@@ -1,0 +1,50 @@
+Give me a breakfast recipe under 350 calories with at least 15g protein.
+I need a dinner recipe that takes less than 25 minutes and contains chicken but no mushrooms.
+Find me a Mexican lunch recipe with under 700mg sodium and at least 8g fiber.
+Suggest a snack recipe with fewer than 10g sugar and exactly one included ingredient: almonds.
+Give me an Italian appetizer recipe under 500 calories that excludes garlic and uses a blender.
+I want a vegan dinner recipe with at least 20g protein and under 15g fat.
+Find a breakfast recipe that uses oats and bananas, takes under 15 minutes, and has at least 5g fiber.
+Suggest a Japanese lunch recipe with less than 600 calories and no soy sauce.
+Give me a dinner recipe with salmon, under 30g carbohydrates, and requiring only one pan.
+Find a Mediterranean appetizer recipe under 20 minutes that excludes dairy.
+I need a snack recipe with at least 12g protein and fewer than 250 calories.
+Suggest a Thai dinner recipe with less than 900mg sodium and no peanuts.
+Give me a breakfast recipe with eggs and spinach that contains under 8g saturated fat.
+Find a lunch recipe using tofu and broccoli with at least 18g protein and under 40g carbs.
+Suggest an Indian dinner recipe under 500 calories that excludes coconut.
+Give me a French appetizer recipe requiring a baking tray and under 12g fat.
+I want a gluten-free snack recipe with fewer than 5g sugar and at least 7g fiber.
+Find a Korean lunch recipe with chicken, under 35 minutes, and less than 700 calories.
+Suggest a breakfast smoothie recipe under 300 calories using a blender and no dairy.
+Give me a dinner recipe with shrimp and zucchini that contains less than 20g fat.
+Find a Spanish appetizer recipe with under 400 calories and at least 10g protein.
+I need a lunch recipe that excludes onions, takes under 20 minutes, and has under 500mg cholesterol.
+Suggest a vegetarian dinner recipe with lentils, over 15g protein, and less than 700mg sodium.
+Give me a breakfast recipe under 250 calories that includes berries and excludes nuts.
+Find a Chinese lunch recipe with tofu and under 50g carbohydrates.
+Suggest a snack recipe using avocado with at least 6g fiber and under 300 calories.
+Give me a dinner recipe with beef that takes less than 40 minutes and contains under 12g saturated fat.
+Find a Greek appetizer recipe excluding olives and under 450 calories.
+Suggest a lunch recipe with quinoa and chickpeas that has at least 10g fiber.
+Give me a breakfast recipe with under 15g sugar and at least 18g protein.
+Find a Cajun dinner recipe using shrimp and under 800mg sodium.
+Suggest an appetizer recipe with tomatoes and basil that requires no oven and under 200 calories.
+Give me a lunch recipe with turkey and spinach that has less than 25g carbohydrates.
+Find a vegan breakfast recipe under 10 minutes with at least 8g protein.
+Suggest a dinner recipe using pork that excludes garlic and contains under 600 calories.
+Give me a snack recipe with yogurt and berries that has fewer than 5g fat.
+Find an Italian lunch recipe requiring a food processor and under 30 minutes.
+Suggest a dinner recipe with cauliflower rice and chicken under 450 calories.
+Give me a breakfast recipe with oats that excludes bananas and contains at least 6g fiber.
+Find a Mediterranean lunch recipe under 20g fat that includes cucumbers and feta.
+Suggest a Thai appetizer recipe with less than 15g carbohydrates and no shellfish.
+Give me a dinner recipe using tofu and mushrooms with at least 22g protein.
+Find a snack recipe under 180 calories that excludes chocolate and nuts.
+Suggest a breakfast recipe with eggs and tomatoes that takes less than 12 minutes.
+Give me a Moroccan dinner recipe with chickpeas and under 700 calories.
+Find a lunch recipe using salmon and avocado with under 10g saturated fat.
+Suggest a vegan appetizer recipe with fewer than 300mg sodium and at least 5g fiber.
+Give me a breakfast recipe requiring a blender with under 20g carbohydrates.
+Find a dinner recipe with turkey meatballs under 500 calories and excluding cheese.
+Suggest a high-protein snack recipe with at least 20g protein and under 350 calories.

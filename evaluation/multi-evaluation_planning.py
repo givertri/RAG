@@ -311,7 +311,7 @@ def load_questions_from_txt(filepath: str) -> list[dict]:
 # 8. Entry point
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    test_set    = load_questions_from_txt("evaluation/testset2.txt")
+    test_set    = load_questions_from_txt("evaluation/test_sets/testset_planning.txt")
     indexer     = OllamaIndexer(collection_name="recipes")
     vectorstore = indexer.get_vectorstore()
 

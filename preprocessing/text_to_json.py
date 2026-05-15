@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import os
 
 class RecipeConstraints(BaseModel):
-    category: Optional[str]
+    category: Optional[str] # breakfast, lunch, snack, dinner, appetizer
     cuisine: Optional[str]
     ingredients_incl: Optional[List[Optional[str]]]
     ingredients_excl: Optional[List[Optional[str]]]
