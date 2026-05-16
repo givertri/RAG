@@ -389,9 +389,9 @@ def load_questions_from_txt(filepath):
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
 
-    test_set = load_questions_from_txt("evaluation/test_sets/testset_negative.txt")
+    #test_set = load_questions_from_txt("evaluation/test_sets/testset_negative.txt")
     #test_set = load_questions_from_txt("evaluation/test_sets/testset_numeric.txt")
-    #test_set = load_questions_from_txt("evaluation/test_sets/testset_highly_constrained.txt")
+    test_set = load_questions_from_txt("evaluation/test_sets/testset_highly_constrained.txt")
 
     indexer = OllamaIndexer(
         collection_name="recipes"
@@ -399,10 +399,7 @@ if __name__ == "__main__":
 
     vectorstore = indexer.get_vectorstore()
 
-    df = run_evaluation(
-        vectorstore,
-        test_set
-    )
+    df = run_evaluation(vectorstore, test_set, start_index=0)
 
     print("\nFINAL RESULTS:")
     print(df.mean(numeric_only=True))
