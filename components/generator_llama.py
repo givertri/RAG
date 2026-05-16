@@ -12,7 +12,7 @@ class LlamaGenerator(BaseGenerator):
 
         # Connect to locally running Ollama instance
         self.llm = ChatOllama(
-            model="llama3.2:latest",
+            model="llama3.2:3b",
             temperature=0.2,
             base_url=os.getenv("RUNPOD_URL"),
             options={

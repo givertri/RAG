@@ -9,7 +9,7 @@ class LlamaGenerator(BaseGenerator):
         load_dotenv(dotenv_path="env.env")
         self.stream = stream
         self.llm = ChatOllama(
-            model="llama3.2:latest",
+            model="llama3.2:3b",
             temperature=0.2,
             base_url=os.getenv("RUNPOD_URL"),
             options={
