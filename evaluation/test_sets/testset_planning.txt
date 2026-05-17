@@ -1,0 +1,50 @@
+2 recipes for breakfast and lunch with Mediterranean cuisine, include olive oil and tomatoes, and global total calories between 1400–1600 kcal, with unique meal categories required.
+3 recipes for breakfast, lunch, and dinner where global protein is 90–120g, exclude dairy across all meals, include at least one Japanese cuisine dish, and breakfast must be very short duration.
+2 recipes for lunch and dinner with Mexican cuisine, include beans and corn, exclude gluten, and global sodium under 1300mg.
+3 recipes for breakfast, lunch, and dinner where global fiber is above 35g, include oats in breakfast, exclude refined sugar across all meals, and lunch must use blender.
+2 recipes for breakfast and lunch with global carbohydrates between 100–140g, include eggs in breakfast, exclude pork, and lunch must be stovetop only.
+3 recipes for breakfast, lunch, and dinner with Italian cuisine influence, include basil and garlic, global fat under 70g, and dinner must be oven-based.
+2 recipes for lunch and dinner with global calories 1200–1500 kcal, include chicken in at least one meal, exclude beef, and lunch must be quick duration.
+3 recipes for breakfast, lunch, and dinner where global sugar is under 25g, include fruit in breakfast, include Korean cuisine, and dinner must include kimchi.
+2 recipes for breakfast and lunch with vegan constraints, include legumes and oats, global protein above 50g total, and exclude dairy.
+3 recipes for breakfast, lunch, and dinner with global sodium under 1000mg, include Mediterranean cuisine, exclude nuts, and lunch must be grilled.
+2 recipes for lunch and dinner with global fat 40–60g, include rice in at least one meal, exclude pork, and dinner must be air fryer based.
+3 recipes for breakfast, lunch, and dinner with Japanese cuisine, include rice and miso, global calories 1500–1700 kcal, and breakfast must include rice.
+2 recipes for breakfast and dinner with global fiber above 25g, include berries and oats, exclude refined grains, and breakfast must be very short time.
+3 recipes for breakfast, lunch, and dinner where global protein exceeds 110g, include chicken and turkey, exclude seafood, and dinner must be long duration.
+2 recipes for lunch and dinner with Indian cuisine, include lentils, global carbohydrates 120–160g, and lunch must be spicy.
+3 recipes for breakfast, lunch, and dinner with global saturated fat under 15g, include yogurt in breakfast, exclude butter, and dinner must be oven baked.
+2 recipes for breakfast and lunch with global sugar under 30g, include smoothies in breakfast, exclude refined sugar, and lunch must include beans.
+3 recipes for breakfast, lunch, and dinner with Mexican cuisine, include corn, global fiber above 40g, and dinner must be grill-based.
+2 recipes for lunch and dinner with global sodium under 900mg, include tofu, exclude pork, and lunch must be stovetop.
+3 recipes for breakfast, lunch, and dinner where global calories are 1600–1800 kcal, include Korean cuisine, exclude beef, and breakfast must include rice.
+2 recipes for breakfast and lunch with global protein 70–90g, include eggs, exclude dairy, and lunch must be short duration.
+3 recipes for breakfast, lunch, and dinner with Italian cuisine, include tomatoes and basil, global carbohydrates 110–150g, and dinner must be oven based.
+2 recipes for lunch and dinner with global fat under 50g, include fish in lunch, exclude pork, and dinner must be air fryer based.
+3 recipes for breakfast, lunch, and dinner with vegan constraints, include tofu and legumes, global fiber above 45g, and breakfast must be smoothie-based.
+2 recipes for breakfast and lunch with global sodium under 1100mg, include oats in breakfast, exclude nuts, and lunch must be stovetop.
+3 recipes for breakfast, lunch, and dinner with Thai cuisine, include chili, exclude pork, global calories 1500–1700 kcal, and dinner must be spicy.
+2 recipes for lunch and dinner with global sugar under 20g, include fruits, exclude dairy, and lunch must be grilled.
+3 recipes for breakfast, lunch, and dinner with French cuisine, include eggs, global protein above 100g, and dinner must be long duration.
+2 recipes for breakfast and lunch with global carbohydrates 90–130g, include rice in breakfast, exclude gluten, and lunch must be quick.
+3 recipes for breakfast, lunch, and dinner with Mediterranean cuisine, include olive oil, global sodium under 1200mg, and dinner must include chicken.
+2 recipes for lunch and dinner with global fiber above 30g, include lentils, exclude refined sugar, and lunch must be stovetop.
+3 recipes for breakfast, lunch, and dinner with Japanese cuisine, include miso and rice, global protein 80–100g, and breakfast must be light.
+2 recipes for breakfast and lunch with global calories 1300–1500 kcal, include oats and fruit, exclude dairy, and breakfast must be very short duration.
+3 recipes for breakfast, lunch, and dinner with Indian cuisine, include legumes, global sodium under 1000mg, and lunch must be spicy.
+2 recipes for lunch and dinner with global fat 50–70g, include avocado, exclude pork, and dinner must be oven baked.
+3 recipes for breakfast, lunch, and dinner with Mexican cuisine, include beans and corn, global protein above 90g, and breakfast must be savory.
+2 recipes for breakfast and lunch with global sugar under 15g, include eggs, exclude refined sugar, and lunch must be blender-based.
+3 recipes for breakfast, lunch, and dinner with Korean cuisine, include kimchi and rice, global fiber above 35g, and dinner must be spicy.
+2 recipes for lunch and dinner with global carbohydrates 100–140g, include chicken, exclude beef, and lunch must be grilled.
+3 recipes for breakfast, lunch, and dinner with Italian cuisine, include garlic and tomatoes, global protein 100–130g, and breakfast must include oats.
+2 recipes for breakfast and lunch with global sodium under 800mg, include vegan ingredients, exclude nuts, and lunch must be stovetop.
+3 recipes for breakfast, lunch, and dinner with Mediterranean cuisine, include legumes, global fat under 60g, and dinner must be air fryer based.
+2 recipes for lunch and dinner with global fiber above 40g, include berries, exclude dairy, and lunch must be quick.
+3 recipes for breakfast, lunch, and dinner with Japanese cuisine, include rice, global calories 1500–1700 kcal, and dinner must be oven baked.
+2 recipes for breakfast and lunch with global protein above 80g, include yogurt in breakfast, exclude seafood, and lunch must be stovetop.
+3 recipes for breakfast, lunch, and dinner with Thai cuisine, include chili, global sugar under 25g, and dinner must be spicy.
+2 recipes for lunch and dinner with global fat under 55g, include legumes, exclude pork, and dinner must be grill based.
+3 recipes for breakfast, lunch, and dinner with vegan constraints, include oats and tofu, global sodium under 1000mg, and breakfast must be smoothie-based.
+2 recipes for breakfast and lunch with global carbohydrates 110–150g, include fruit, exclude refined sugar, and lunch must be quick duration.
+3 recipes for breakfast, lunch, and dinner with French cuisine, include chicken, global protein above 110g, and dinner must be long duration.
