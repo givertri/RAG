@@ -73,7 +73,7 @@ Follow the official installation guide: [Ollama download](https://ollama.com/dow
 Download Required Models:
 
 ```bash
-ollama pull qwen3:4b
+ollama pull qwen3:14b
 ollama pull llama3.2:3b
 ollama pull nomic-embed-text
 ```
