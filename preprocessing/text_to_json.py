@@ -97,7 +97,7 @@ def normalize_keys(data):
 
     return normalized
 
-def text_to_json(text, seed: None):
+def text_to_json(text, seed=None):
     load_dotenv(dotenv_path="env.env")
     llm = ChatOllama(
         model="qwen3:14b",
