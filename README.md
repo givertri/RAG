@@ -2,6 +2,8 @@
 
 A Retrieval-Augmented Generation (RAG) application for generating recipe suggestions and meal plans. The application uses a Milvus vector database, a hybrid retriever and LLM generation via Ollama.
 
+This code is part of the master's thesis by Gilles Vertriest for the advanced master of Artificial Intelligence at KU Leuven: "Constraint-Aware RAG for Recipe Suggestion and Meal Planning".
+
 ---
 
 ## Directory Structure
@@ -45,7 +47,7 @@ pip install -r requirements.txt
 
 ### 2. Start and Populate Milvus
 
-This project uses **Milvus** as the vector database.
+This project uses **Milvus** as vector database. 
 
 #### Start Milvus
 
