@@ -113,7 +113,7 @@ python main.py "Give me a dinner dish with tomatoes."
 
 #### Optional: Choose Retriever Type
 
-* **Hybrid** → combines structured + semantic retrieval
+* **Hybrid** → combines structured + semantic retrieval and filtering
 * **Regular** → semantic-only retrieval
 
 ```bash
@@ -149,13 +149,13 @@ python main_planning.py "Give me a tasty dish."
 ## Components
 
 * **Indexer**: Stores and indexes Nomic & BM25 embeddings
+* **Preprocessors:**:
+  * `split_query` → splits one query in multiple subqueries (for multi-recipe RAG)
+  * `text_to_json` → extracts constraints in query to structured JSON constraints
 * **Retrievers**:
   * `LangchainRetriever` → semantic search
   * `LangchainRetrieverHybrid` → keyword search + semantic search + filtering
 * **Generator**: Uses Llama 3.2 for generation with retrieved context
-* **Preprocessors:**:
-  * `split_query` → splits one query in multiple subqueries (for multi-recipe RAG)
-  * `text_to_json` → extracts constraints in query to structured JSON constraints
 
 ---
 
