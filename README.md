@@ -1,6 +1,25 @@
 # 🍽️ RAG Recipe Assistant
 
-A Retrieval-Augmented Generation (RAG) pipeline for generating recipe suggestions using local embeddings, hybrid retrieval, and LLM generation via Ollama.
+A Retrieval-Augmented Generation (RAG) application for generating recipe suggestions and meal plans. The application uses a Milvus vector database, a hybrid retriever and LLM generation via Ollama.
+
+---
+
+## Directory Structure
+
+RAG/
+├── analysis/              # Data analysis notebooks
+├── components/            # Application components: generators, indexers, data loader & retrievers
+├── core/                  # Component base classes & RAG pipelines
+├── dataset/               # Original dataset, cleaned dataset & preprocessing notebooks
+├── evaluation/            # Evaluation scripts
+│   └── test_sets/         # Test queries for evaluation
+├── preprocessing/         # Qwen preprocessors: query splitter & JSON extractors
+├── docker-compose.yml     # Milvus Docker Compose file
+├── main.py                # Single-recipe application entry point
+├── main_planning.py       # Multi-recipe application entry point
+├── populate_db.py         # Database population script
+├── requirements.txt       # Python dependencies
+└── setup_ollama.sh        # Ollama setup script
 
 ---
 
