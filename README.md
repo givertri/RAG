@@ -6,6 +6,7 @@ A Retrieval-Augmented Generation (RAG) application for generating recipe suggest
 
 ## Directory Structure
 
+```text
 RAG/
 ├── analysis/              # Data analysis notebooks
 ├── components/            # Application components: generators, indexers, data loader & retrievers
@@ -20,7 +21,7 @@ RAG/
 ├── populate_db.py         # Database population script
 ├── requirements.txt       # Python dependencies
 └── setup_ollama.sh        # Ollama setup script
-
+```
 ---
 
 ## Installation & Setup
@@ -51,11 +52,8 @@ This project uses **Milvus** as the vector database.
 ```bash
 docker compose up -d
 ```
-OR
-```bash
-bash install_milvus.sh
-./start_milvus.sh
-```
+
+This creates a directory called volumes for data persistance when run for the first time.
 
 #### Populate the Database
 
@@ -67,24 +65,23 @@ python -m populate_db
 
 ### 3. Install Ollama (Linux)
 
-Follow the official installation:
+#### Windows
+Follow the official installation: [curl -fsSL https://ollama.com/install.sh | sh](https://ollama.com/download/windows)
 
-```bash
-curl -fsSL https://ollama.com/install.sh | sh
-```
-
-#### Set Model Location & Serve
-```bash
-export OLLAMA_MODELS=/workspace/ollama_models
-ollama serve &
-```
-
-#### Download Required Models
+Download Required Models
 
 ```bash
 ollama pull qwen3:4b
 ollama pull llama3.2:3b
 ollama pull nomic-embed-text
+```
+
+#### Linux
+
+Use the setup script:
+
+```bash
+bash setup_ollama.sh
 ```
 
 ---
