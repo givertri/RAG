@@ -53,7 +53,7 @@ This project uses **Milvus** as the vector database.
 docker compose up -d
 ```
 
-This creates a directory called volumes for data persistance when run for the first time.
+This creates a directory called ``volumes`` for data persistance when run for the first time.
 
 #### Populate the Database
 
@@ -86,12 +86,25 @@ bash setup_ollama.sh
 
 ---
 
+### 4. Set Environment Variable
+
+Create a file in the root directory called ``env.env`` and set the environment variable for the URL where Ollama is running.
+
+For example:
+```python
+RUNPOD_URL=http://localhost:11434
+```
+
+This file can also be used to store an API key if needed.
+
+---
+
 ## Running the RAG Pipeline
 
 Run the main script with a custom prompt:
 
 ```bash
-python main.py "Give me a spicy vegan dish"
+python main.py "Give me a spicy vegan dish."
 ```
 
 ### Optional: Choose Retriever Type
