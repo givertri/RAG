@@ -66,9 +66,9 @@ python -m populate_db
 ### 3. Install Ollama (Linux)
 
 #### Windows
-Follow the official installation: [curl -fsSL https://ollama.com/install.sh | sh](https://ollama.com/download/windows)
+Follow the official installation guide: [Ollama download](https://ollama.com/download/windows)
 
-Download Required Models
+Download Required Models:
 
 ```bash
 ollama pull qwen3:4b
@@ -95,70 +95,65 @@ For example:
 RUNPOD_URL=http://localhost:11434
 ```
 
-This file can also be used to store an API key if needed.
+This file can also be used to store an API key for an external LLM if needed.
 
 ---
 
 ## Running the RAG Pipeline
 
-Run the main script with a custom prompt:
+### Single-Recipe RAG
+
+Run the application with a custom prompt/query:
 
 ```bash
-python main.py "Give me a spicy vegan dish."
+python main.py "Give me a dinner dish with tomatoes."
 ```
 
-### Optional: Choose Retriever Type
+#### Optional: Choose Retriever Type
 
-* **Hybrid (default)** → combines structured + semantic retrieval
+* **Hybrid** → combines structured + semantic retrieval
 * **Regular** → semantic-only retrieval
 
 ```bash
-python main.py "Give me a quick pasta recipe" --retriever regular
+python main.py "Give me a quick pasta recipe." --retriever regular
 ```
 
----
+#### Default Behavior
 
-## How It Works
-
-### Pipeline Components
-
-* **Indexer**: Uses Nomic & BM25 embeddings to connect to Milvus
-* **Retriever**:
-  * `LangchainRetriever` → basic vector similarity
-  * `LangchainRetrieverHybrid` → keyword search + semantic search + filtering
-* **Generator**: Uses Llama 3.2 for generation with retrieved context
-* **Pipeline**: Combines retrieval + generation
-
----
-
-## 🛠️ Code Entry Point
-
-```python
-python main.py "Your prompt here"
-```
-
-### Default Behavior
-
-If no prompt is provided:
+Running the application without arguments is equivalent to:
 
 ```bash
-python main.py
+python main.py "Give me a tasty dish." --retriever regular
 ```
 
-It will run with:
+### Multi-Recipe RAG
 
+Run the application with a custom prompt/query:
+
+```bash
+python main_planning.py "Give me a breakfast recipe with eggs and a dinner dish with tomatoes."
 ```
-"Give me a tasty dish."
+
+#### Default Behavior
+
+Running the application without arguments is equivalent to:
+
+```bash
+python main_planning.py "Give me a tasty dish."
 ```
 
 ---
 
-## Arguments
+## Components
 
-| Argument      | Description                    | Default  |
-| ------------- | ------------------------------ | -------- |
-| `prompt`      | Input query for the RAG system | Optional |
-| `--retriever` | `regular` or `hybrid`          | hybrid   |
+* **Indexer**: Stores and indexes Nomic & BM25 embeddings
+* **Retrievers**:
+  * `LangchainRetriever` → semantic search
+  * `LangchainRetrieverHybrid` → keyword search + semantic search + filtering
+* **Generator**: Uses Llama 3.2 for generation with retrieved context
+* **Preprocessors:**:
+  * `split_query` → splits one query in multiple subqueries (for multi-recipe RAG)
+  * `text_to_json` → extracts constraints in query to structured JSON constraints
 
 ---
 
@@ -171,4 +166,12 @@ python -m evaluation.evaluation_short
 ### All systems: LLM-only, Standard RAG, Constraint-Aware RAG
 ```bash
 python -m evaluation.multi-evaluation
+```
+### Multi-Recipe RAG only
+```bash
+python -m evaluation.multi-evaluation_planning
+```
+### Edge case evaluation
+```bash
+python -m evaluation.multi-evaluation_edge_cases
 ```
